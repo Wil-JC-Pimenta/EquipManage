@@ -1,12 +1,10 @@
-class Equipamento {
-    constructor(id, name, type, serialNumber, clientId) {
-      this.id = id;
-      this.name = name;
-      this.type = type;
-      this.serialNumber = serialNumber;
-      this.clientId = clientId;
-    }
-  }
-  
-  module.exports = Equipamento;
-  
+const { DataTypes } = require('sequelize');
+const sequelize = require('./index');
+
+const Equipamento = sequelize.define('Equipamento', {
+  name: DataTypes.STRING,
+  type: DataTypes.STRING,
+  serialNumber: DataTypes.STRING,
+});
+
+module.exports = Equipamento;

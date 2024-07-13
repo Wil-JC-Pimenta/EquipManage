@@ -7,7 +7,6 @@ class Certificate {
     }
   
     generate() {
-      // Adicione a lógica para gerar o certificado, possivelmente salvando em um arquivo PDF
       return `
         Certificado de Calibração
   

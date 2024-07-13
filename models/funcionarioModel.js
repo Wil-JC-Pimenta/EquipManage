@@ -1,11 +1,10 @@
-class Funcionario {
-    constructor(id, name, email, role) {
-      this.id = id;
-      this.name = name;
-      this.email = email;
-      this.role = role;
-    }
-  }
-  
-  module.exports = Funcionario;
-  
+const { DataTypes } = require('sequelize');
+const sequelize = require('./index');
+
+const Funcionario = sequelize.define('Funcionario', {
+  name: DataTypes.STRING,
+  email: DataTypes.STRING,
+  role: DataTypes.STRING,
+});
+
+module.exports = Funcionario;
