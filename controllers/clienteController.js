@@ -1,6 +1,4 @@
 exports.createCliente = (req, res) => {
-    const { id, name, email, address, phone } = req.body;
-    // Adicionar lógica para salvar o cliente no banco de dados
-    res.send(`Cliente ${name} criado com sucesso!`);
-  };
-  
+  const { name, email, address } = req.body;
+  res.send(`Cliente ${name} com email ${email} e endereço ${address} criado com sucesso!`);
+};

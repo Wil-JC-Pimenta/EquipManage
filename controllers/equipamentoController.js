@@ -1,6 +1,4 @@
 exports.createEquipamento = (req, res) => {
-    const { id, name, type, serialNumber, clientId } = req.body;
-    // Adicionar lógica para salvar o equipamento no banco de dados
-    res.send(`Equipamento ${name} criado com sucesso!`);
-  };
-  
+  const { name, type, serialNumber } = req.body;
+  res.send(`Equipamento ${name} do tipo ${type} com número de série ${serialNumber} criado com sucesso!`);
+};

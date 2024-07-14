@@ -3,6 +3,6 @@ const router = express.Router();
 const clienteController = require('../controllers/clienteController');
 const clienteValidator = require('../validators/clienteValidator');
 
-router.post('/cliente', clienteValidator.validateCliente, clienteController.createCliente);
+router.post('/', clienteValidator.validateCliente, clienteController.createCliente);
 
 module.exports = router;

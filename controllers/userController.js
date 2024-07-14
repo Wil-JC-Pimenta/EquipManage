@@ -12,4 +12,3 @@ exports.createUser = (req, res) => {
   const { name, email } = req.body;
   res.send(`Usuário ${name} com email ${email} criado com sucesso!`);
 };
-
