@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
-const userValidator = require('../validators/userValidator');
 
-router.get('/', userController.home);
-router.get('/about', userController.about);
-router.post('/', userValidator.validateUser, userController.createUser);
+router.post('/', userController.createUser);
+router.get('/', userController.getUsers);
+router.get('/:id', userController.getUser);
+router.put('/:id', userController.updateUser);
+router.delete('/:id', userController.deleteUser);
 
 module.exports = router;

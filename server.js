@@ -46,7 +46,7 @@ app.use('/funcionarios', funcionarioRoutes);
 app.use('/certificados', certificadoRoutes);
 
 // Sincronizar banco de dados e iniciar servidor
-sequelize.sync().then(() => {
+sequelize.sync({ alter: true }).then(() => {
   app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
   });
