@@ -10,6 +10,7 @@ const clienteRoutes = require('./routes/clienteRoutes');
 const equipamentoRoutes = require('./routes/equipamentoRoutes'); 
 const funcionarioRoutes = require('./routes/funcionarioRoutes');
 const certificadoRoutes = require('./routes/certificadoRoutes');
+const { User, Cliente, Equipamento, Certificado } = require('./models');
 
 // Middleware para parsear JSON
 app.use(express.json());
@@ -56,6 +57,43 @@ app.use('/api/clientes', clienteRoutes);
 app.use('/api/equipamentos', equipamentoRoutes);
 app.use('/api/funcionarios', funcionarioRoutes);
 app.use('/api/certificados', certificadoRoutes);
+
+// Rotas de contagem
+app.get('/api/users/count', async (req, res) => {
+  try {
+    const count = await User.count();
+    res.json({ count });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar contagem de usuários' });
+  }
+});
+
+app.get('/api/clientes/count', async (req, res) => {
+  try {
+    const count = await Cliente.count();
+    res.json({ count });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar contagem de clientes' });
+  }
+});
+
+app.get('/api/equipamentos/count', async (req, res) => {
+  try {
+    const count = await Equipamento.count();
+    res.json({ count });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar contagem de equipamentos' });
+  }
+});
+
+app.get('/api/certificados/count', async (req, res) => {
+  try {
+    const count = await Certificado.count();
+    res.json({ count });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar contagem de certificados' });
+  }
+});
 
 // Sincronizar banco de dados e iniciar servidor
 sequelize.sync({ alter: true }).then(() => {

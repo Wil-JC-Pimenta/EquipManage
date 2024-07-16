@@ -4,7 +4,135 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Equipamentos</title>
-  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #333;
+      color: white;
+      padding: 15px 0;
+    }
+
+    header h1 {
+      text-align: center;
+      margin: 0;
+    }
+
+    nav ul {
+      display: flex;
+      justify-content: center;
+      list-style-type: none;
+      padding: 0;
+    }
+
+    nav ul li {
+      margin: 0 15px;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+    }
+
+    main {
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 18px;
+      text-align: left;
+    }
+
+    table th, table td {
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+    }
+
+    table th {
+      background-color: #f2f2f2;
+    }
+
+    table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      background-color: #333;
+      color: white;
+      position: fixed;
+      width: 100%;
+      bottom: 0;
+    }
+
+    form {
+      margin: 20px 0;
+      display: flex;
+      flex-direction: column;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    form label {
+      margin-bottom: 5px;
+    }
+
+    form input, form textarea, form select {
+      margin-bottom: 15px;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    form textarea {
+      height: 100px;
+    }
+
+    form input[type="submit"] {
+      background-color: #333;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .actions button {
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    .actions .edit {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+    }
+
+    .actions .delete {
+      background-color: #f44336;
+      color: white;
+      border: none;
+    }
+
+    .description {
+      white-space: pre-line;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -29,50 +157,153 @@
           <th>Nome</th>
           <th>Descrição</th>
           <th>Cliente</th>
+          <th>Ações</th>
         </tr>
       </thead>
       <tbody id="equipmentList"></tbody>
     </table>
+    <h2>Adicionar Equipamento</h2>
+    <form id="equipmentForm">
+      <label for="nome">Nome:</label><br>
+      <input type="text" id="nome" name="nome" required><br>
+      <label for="descricao">Descrição:</label><br>
+      <textarea id="descricao" name="descricao" required></textarea><br>
+      <label for="clienteId">Cliente ID:</label><br>
+      <input type="number" id="clienteId" name="clienteId" required><br><br>
+      <input type="submit" value="Adicionar">
+    </form>
+    <h2>Atualizar Equipamento</h2>
+    <form id="updateEquipmentForm" style="display: none;">
+      <input type="hidden" id="updateId" name="id">
+      <label for="updateNome">Nome:</label><br>
+      <input type="text" id="updateNome" name="nome" required><br>
+      <label for="updateDescricao">Descrição:</label><br>
+      <textarea id="updateDescricao" name="descricao" required></textarea><br>
+      <label for="updateClienteId">Cliente ID:</label><br>
+      <input type="number" id="updateClienteId" name="clienteId" required><br><br>
+      <input type="submit" value="Atualizar">
+    </form>
   </main>
   <footer>
     <p>&copy; 2024 Empresa XYZ. Todos os direitos reservados.</p>
   </footer>
   <script>
-    async function fetchEquipmentsAndClients() {
+    async function fetchEquipments() {
       try {
-        const [equipmentResponse, clientResponse] = await Promise.all([
-          fetch('/api/equipamentos'),
-          fetch('/api/clientes')
-        ]);
-
-        const equipments = await equipmentResponse.json();
-        const clients = await clientResponse.json();
-
-        const clientMap = {};
-        clients.forEach(client => {
-          clientMap[client.id] = client.nome;
-        });
+        const response = await fetch('/api/equipamentos');
+        const equipments = await response.json();
 
         const equipmentList = document.getElementById('equipmentList');
+        equipmentList.innerHTML = '';
         equipments.forEach(equipment => {
           const row = document.createElement('tr');
 
-          const formattedDescription = equipment.descricao.replace(/, /g, '\n');
+          const formattedDescription = formatDescription(equipment.descricao);
 
           row.innerHTML = `
             <td>${equipment.id}</td>
             <td>${equipment.nome}</td>
             <td class="description">${formattedDescription}</td>
-            <td>${clientMap[equipment.clienteId] || 'Cliente não encontrado'}</td>
+            <td>${equipment.clienteId} - ${equipment.cliente ? equipment.cliente.name : 'N/A'}</td>
+            <td class="actions">
+              <button class="edit" onclick="editEquipment(${equipment.id}, '${equipment.nome}', '${equipment.descricao}', ${equipment.clienteId})">Editar</button>
+              <button class="delete" onclick="deleteEquipment(${equipment.id})">Deletar</button>
+            </td>
           `;
           equipmentList.appendChild(row);
         });
       } catch (error) {
-        console.error('Erro ao buscar equipamentos e clientes:', error);
+        console.error('Erro ao buscar equipamentos:', error);
       }
     }
 
-    fetchEquipmentsAndClients();
+    document.getElementById('equipmentForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      const nome = document.getElementById('nome').value;
+      const descricao = document.getElementById('descricao').value;
+      const clienteId = document.getElementById('clienteId').value;
+
+      const newEquipment = { nome, descricao, clienteId };
+
+      try {
+        const response = await fetch('/api/equipamentos', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(newEquipment)
+        });
+
+        if (response.ok) {
+          fetchEquipments();
+        } else {
+          console.error('Erro ao adicionar equipamento:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Erro ao adicionar equipamento:', error);
+      }
+    });
+
+    function editEquipment(id, nome, descricao, clienteId) {
+      document.getElementById('updateId').value = id;
+      document.getElementById('updateNome').value = nome;
+      document.getElementById('updateDescricao').value = descricao;
+      document.getElementById('updateClienteId').value = clienteId;
+      document.getElementById('updateEquipmentForm').style.display = 'block';
+    }
+
+    document.getElementById('updateEquipmentForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      const id = document.getElementById('updateId').value;
+      const nome = document.getElementById('updateNome').value;
+      const descricao = document.getElementById('updateDescricao').value;
+      const clienteId = document.getElementById('updateClienteId').value;
+
+      const updatedEquipment = { nome, descricao, clienteId };
+
+      try {
+        const response = await fetch(`/api/equipamentos/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updatedEquipment)
+        });
+
+        if (response.ok) {
+          fetchEquipments();
+          document.getElementById('updateEquipmentForm').style.display = 'none';
+        } else {
+          console.error('Erro ao atualizar equipamento:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Erro ao atualizar equipamento:', error);
+      }
+    });
+
+    async function deleteEquipment(id) {
+      try {
+        const response = await fetch(`/api/equipamentos/${id}`, {
+          method: 'DELETE'
+        });
+
+        if (response.ok) {
+          fetchEquipments();
+        } else {
+          console.error('Erro ao deletar equipamento:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Erro ao deletar equipamento:', error);
+      }
+    }
+
+    function formatDescription(description) {
+      return description.replace(/, /g, '\n');
+    }
+
+    fetchEquipments();
   </script>
 </body>
 </html>

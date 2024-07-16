@@ -5,10 +5,120 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Painel do Sistema Empresarial</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #333;
+      color: white;
+      padding: 15px 0;
+    }
+
+    header h1 {
+      text-align: center;
+      margin: 0;
+    }
+
+    nav ul {
+      display: flex;
+      justify-content: center;
+      list-style-type: none;
+      padding: 0;
+    }
+
+    nav ul li {
+      margin: 0 15px;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+    }
+
+    main {
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-top: 0;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      margin: 20px 0;
+    }
+
+    .stats div {
+      text-align: center;
+      flex: 1;
+      margin: 0 10px;
+      padding: 20px;
+      background-color: #f2f2f2;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .stats div h3 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .stats div p {
+      font-size: 18px;
+      margin: 10px 0 0;
+    }
+
+    .shortcuts {
+      margin: 20px 0;
+    }
+
+    .shortcuts h3 {
+      margin-bottom: 10px;
+    }
+
+    .shortcuts ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .shortcuts ul li {
+      margin-bottom: 10px;
+    }
+
+    .shortcuts ul li a {
+      text-decoration: none;
+      color: #333;
+      background-color: #f2f2f2;
+      padding: 10px 15px;
+      border-radius: 5px;
+      display: block;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .shortcuts ul li a:hover {
+      background-color: #ddd;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      background-color: #333;
+      color: white;
+      position: fixed;
+      width: 100%;
+      bottom: 0;
+    }
+  </style>
 </head>
 <body>
   <header>
-    <h1>Painel do Sistema Empresarial</h1>
+    <h1>Painel do Sistema</h1>
     <nav>
       <ul>
         <li><a href="/users">Usuários</a></li>
@@ -21,10 +131,62 @@
   </header>
   <main>
     <h2>Bem-vindo ao Painel do Sistema Empresarial</h2>
-    <p>Escolha uma das opções no menu acima para navegar pelas seções do sistema.</p>
+    <div class="stats">
+      <div>
+        <h3 id="totalUsers">-</h3>
+        <p>Usuários Registrados</p>
+      </div>
+      <div>
+        <h3 id="activeClients">-</h3>
+        <p>Clientes Ativos</p>
+      </div>
+      <div>
+        <h3 id="inUseEquipments">-</h3>
+        <p>Equipamentos em Uso</p>
+      </div>
+      <div>
+        <h3 id="issuedCertificates">-</h3>
+        <p>Certificados Emitidos</p>
+      </div>
+    </div>
+    <div class="shortcuts">
+      <h3>Atalhos Rápidos</h3>
+      <ul>
+        <li><a href="/clientes/">Adicionar Novo Cliente</a></li>
+        <li><a href="/equipamentos/">Adicionar Novo Equipamento</a></li>
+        <li><a href="/certificados/">Emitir Novo Certificado</a></li>
+        <li><a href="/reports">Gerar Relatórios</a></li>
+      </ul>
+    </div>
   </main>
   <footer>
     <p>&copy; 2024 Empresa XYZ. Todos os direitos reservados.</p>
   </footer>
+  <script>
+    async function fetchData() {
+      try {
+        const [usersResponse, clientsResponse, equipmentsResponse, certificatesResponse] = await Promise.all([
+          fetch('/api/users/count'),
+          fetch('/api/clientes/count'),
+          fetch('/api/equipamentos/count'),
+          fetch('/api/certificados/count')
+        ]);
+
+        const totalUsers = await usersResponse.json();
+        const activeClients = await clientsResponse.json();
+        const inUseEquipments = await equipmentsResponse.json();
+        const issuedCertificates = await certificatesResponse.json();
+
+        document.getElementById('totalUsers').textContent = totalUsers.count;
+        document.getElementById('activeClients').textContent = activeClients.count;
+        document.getElementById('inUseEquipments').textContent = inUseEquipments.count;
+        document.getElementById('issuedCertificates').textContent = issuedCertificates.count;
+      } catch (error) {
+        console.error('Erro ao buscar dados:', error);
+      }
+    }
+
+    fetchData();
+  </script>
 </body>
 </html>
