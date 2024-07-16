@@ -12,6 +12,37 @@ const funcionarioRoutes = require('./routes/funcionarioRoutes');
 const certificadoRoutes = require('./routes/certificadoRoutes');
 const { User, Cliente, Equipamento, Certificado } = require('./models');
 
+app.use(express.json());
+
+app.post('/users', (req, res) => {
+    // Lógica para adicionar usuario
+    res.status(201).send(req.body);
+});
+
+
+app.post('/clientes', (req, res) => {
+  // Lógica para adicionar cliente
+  res.status(201).send(req.body);
+});
+
+app.post('/equipamentos', (req, res) => {
+  // Lógica para adicionar equipamento
+  res.status(201).send(req.body);
+});
+
+
+app.post('/funcionario', (req, res) => {
+  // Lógica para adicionar funcionário
+  res.status(201).send(req.body);
+});
+
+
+app.post('/certificados', (req, res) => {
+  // Lógica para adicionar funcionário
+  res.status(201).send(req.body);
+});
+
+
 // Middleware para parsear JSON
 app.use(express.json());
 

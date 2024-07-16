@@ -132,6 +132,56 @@
     .description {
       white-space: pre-line;
     }
+
+    /* Popup */
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 20px;
+      border: 1px solid #ddd;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      z-index: 1000;
+      display: none;
+    }
+
+    .popup h3 {
+      margin-top: 0;
+    }
+
+    .popup .actions {
+      justify-content: flex-end;
+    }
+
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      display: none;
+    }
+
+    .popup button {
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .popup .confirm {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+    }
+
+    .popup .cancel {
+      background-color: #f44336;
+      color: white;
+      border: none;
+    }
   </style>
 </head>
 <body>
@@ -172,22 +222,39 @@
       <input type="number" id="clienteId" name="clienteId" required><br><br>
       <input type="submit" value="Adicionar">
     </form>
-    <h2>Atualizar Equipamento</h2>
-    <form id="updateEquipmentForm" style="display: none;">
-      <input type="hidden" id="updateId" name="id">
-      <label for="updateNome">Nome:</label><br>
-      <input type="text" id="updateNome" name="nome" required><br>
-      <label for="updateDescricao">Descrição:</label><br>
-      <textarea id="updateDescricao" name="descricao" required></textarea><br>
-      <label for="updateClienteId">Cliente ID:</label><br>
-      <input type="number" id="updateClienteId" name="clienteId" required><br><br>
-      <input type="submit" value="Atualizar">
-    </form>
+    <div class="popup-overlay" id="editPopupOverlay"></div>
+    <div class="popup" id="editPopup">
+      <h3>Editar Equipamento</h3>
+      <form id="updateEquipmentForm">
+        <input type="hidden" id="updateId" name="id">
+        <label for="updateNome">Nome:</label><br>
+        <input type="text" id="updateNome" name="nome" required><br>
+        <label for="updateDescricao">Descrição:</label><br>
+        <textarea id="updateDescricao" name="descricao" required></textarea><br>
+        <label for="updateClienteId">Cliente ID:</label><br>
+        <input type="number" id="updateClienteId" name="clienteId" required><br><br>
+        <div class="actions">
+          <button type="submit" class="confirm">Atualizar</button>
+          <button type="button" class="cancel" onclick="closeEditPopup()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+    <div class="popup-overlay" id="deletePopupOverlay"></div>
+    <div class="popup" id="deletePopup">
+      <h3>Confirmar Deleção</h3>
+      <p id="deleteMessage"></p>
+      <div class="actions">
+        <button class="confirm" onclick="confirmDelete()">Sim</button>
+        <button class="cancel" onclick="closeDeletePopup()">Não</button>
+      </div>
+    </div>
   </main>
   <footer>
     <p>&copy; 2024 Empresa XYZ. Todos os direitos reservados.</p>
   </footer>
   <script>
+    let equipmentToDelete = null;
+
     async function fetchEquipments() {
       try {
         const response = await fetch('/api/equipamentos');
@@ -206,8 +273,8 @@
             <td class="description">${formattedDescription}</td>
             <td>${equipment.clienteId} - ${equipment.cliente ? equipment.cliente.name : 'N/A'}</td>
             <td class="actions">
-              <button class="edit" onclick="editEquipment(${equipment.id}, '${equipment.nome}', '${equipment.descricao}', ${equipment.clienteId})">Editar</button>
-              <button class="delete" onclick="deleteEquipment(${equipment.id})">Deletar</button>
+              <button class="edit" onclick="showEditPopup(${equipment.id}, '${equipment.nome}', '${formattedDescription.replace(/\n/g, '\\n')}', ${equipment.clienteId})">Editar</button>
+              <button class="delete" onclick="showDeletePopup(${equipment.id}, '${equipment.nome}')">Deletar</button>
             </td>
           `;
           equipmentList.appendChild(row);
@@ -237,6 +304,7 @@
 
         if (response.ok) {
           fetchEquipments();
+          document.getElementById('equipmentForm').reset(); // Limpar o formulário após adicionar
         } else {
           console.error('Erro ao adicionar equipamento:', response.statusText);
         }
@@ -245,12 +313,18 @@
       }
     });
 
-    function editEquipment(id, nome, descricao, clienteId) {
+    function showEditPopup(id, nome, descricao, clienteId) {
       document.getElementById('updateId').value = id;
       document.getElementById('updateNome').value = nome;
-      document.getElementById('updateDescricao').value = descricao;
+      document.getElementById('updateDescricao').value = descricao.replace(/\\n/g, '\n');
       document.getElementById('updateClienteId').value = clienteId;
-      document.getElementById('updateEquipmentForm').style.display = 'block';
+      document.getElementById('editPopupOverlay').style.display = 'block';
+      document.getElementById('editPopup').style.display = 'block';
+    }
+
+    function closeEditPopup() {
+      document.getElementById('editPopupOverlay').style.display = 'none';
+      document.getElementById('editPopup').style.display = 'none';
     }
 
     document.getElementById('updateEquipmentForm').addEventListener('submit', async function(event) {
@@ -274,7 +348,7 @@
 
         if (response.ok) {
           fetchEquipments();
-          document.getElementById('updateEquipmentForm').style.display = 'none';
+          closeEditPopup();
         } else {
           console.error('Erro ao atualizar equipamento:', response.statusText);
         }
@@ -283,24 +357,40 @@
       }
     });
 
-    async function deleteEquipment(id) {
-      try {
-        const response = await fetch(`/api/equipamentos/${id}`, {
-          method: 'DELETE'
-        });
+    function showDeletePopup(id, nome) {
+      equipmentToDelete = id;
+      document.getElementById('deleteMessage').innerText = `Deseja realmente deletar o Equipamento: ${nome}?`;
+      document.getElementById('deletePopupOverlay').style.display = 'block';
+      document.getElementById('deletePopup').style.display = 'block';
+    }
 
-        if (response.ok) {
-          fetchEquipments();
-        } else {
-          console.error('Erro ao deletar equipamento:', response.statusText);
+    function closeDeletePopup() {
+      document.getElementById('deletePopupOverlay').style.display = 'none';
+      document.getElementById('deletePopup').style.display = 'none';
+      equipmentToDelete = null;
+    }
+
+    async function confirmDelete() {
+      if (equipmentToDelete !== null) {
+        try {
+          const response = await fetch(`/api/equipamentos/${equipmentToDelete}`, {
+            method: 'DELETE'
+          });
+
+          if (response.ok) {
+            fetchEquipments();
+            closeDeletePopup();
+          } else {
+            console.error('Erro ao deletar equipamento:', response.statusText);
+          }
+        } catch (error) {
+          console.error('Erro ao deletar equipamento:', error);
         }
-      } catch (error) {
-        console.error('Erro ao deletar equipamento:', error);
       }
     }
 
     function formatDescription(description) {
-      return description.replace(/, /g, '\n');
+      return description ? description.replace(/, /g, '\n') : '';
     }
 
     fetchEquipments();
