@@ -1,10 +1,20 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('./index');
+const sequelize = require('../models/index'); // Certifique-se de que o caminho esteja correto
 
-const Cliente = sequelize.define('cliente', {
-  name: DataTypes.STRING,
-  email: DataTypes.STRING,
-  address: DataTypes.STRING,
+const Cliente = sequelize.define('clientes', {
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  address: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 });
 
 module.exports = Cliente;

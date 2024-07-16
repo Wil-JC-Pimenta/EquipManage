@@ -7,7 +7,7 @@ const sequelize = require('./models/index');
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const clienteRoutes = require('./routes/clienteRoutes');
-const equipamentoRoutes = require('./routes/equipamentoRoutes'); // Importação das rotas de equipamentos
+const equipamentoRoutes = require('./routes/equipamentoRoutes'); 
 const funcionarioRoutes = require('./routes/funcionarioRoutes');
 const certificadoRoutes = require('./routes/certificadoRoutes');
 
@@ -41,7 +41,7 @@ app.get('/about', (req, res) => {
 app.use('/users', userRoutes);
 app.use('/admins', adminRoutes);
 app.use('/clientes', clienteRoutes);
-app.use('/equipamentos', equipamentoRoutes); // Uso das rotas de equipamentos
+app.use('/equipamentos', equipamentoRoutes);
 app.use('/funcionarios', funcionarioRoutes);
 app.use('/certificados', certificadoRoutes);
 
