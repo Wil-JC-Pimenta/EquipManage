@@ -1,11 +1,28 @@
-class Admin {
-    constructor(id, name, email, password) {
-      this.id = id;
-      this.name = name;
-      this.email = email;
-      this.password = password;
-    }
-  }
-  
-  module.exports = Admin;
-  
+const { DataTypes } = require('sequelize');
+const sequelize = require('./index');
+
+const Admin = sequelize.define('admins', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+}, {
+  tableName: 'admins',
+  timestamps: false,
+});
+
+module.exports = Admin;
