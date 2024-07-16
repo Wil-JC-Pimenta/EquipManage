@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Funcionários</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Funcionários</h1>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/users">Usuários</a></li>
+        <li><a href="/clientes">Clientes</a></li>
+        <li><a href="/equipamentos">Equipamentos</a></li>
+        <li><a href="/funcionarios">Funcionários</a></li>
+        <li><a href="/certificados">Certificados</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <h2>Lista de Funcionários</h2>
+    <div id="employeeList"></div>
+  </main>
+  <footer>
+    <p>&copy; 2024 Empresa XYZ. Todos os direitos reservados.</p>
+  </footer>
+  <script>
+    fetch('/api/funcionarios')
+      .then(response => response.json())
+      .then(data => {
+        const employeeList = document.getElementById('employeeList');
+        data.forEach(employee => {
+          const employeeDiv = document.createElement('div');
+          employeeDiv.textContent = `ID: ${employee.id}, Nome: ${employee.name}, Email: ${employee.email}, Função: ${employee.role}`;
+          employeeList.appendChild(employeeDiv);
+        });
+      })
+      .catch(error => console.error('Erro ao buscar funcionários:', error));
+  </script>
+</body>
+</html>

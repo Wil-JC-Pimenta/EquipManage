@@ -1,12 +1,10 @@
-// models/certificate.model.js
-
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
-const Equipment = require('./equipment.model');
-const Client = require('./client.model');
-const Employee = require('./employee.model');
+const sequelize = require('./index');
+const Equipment = require('./equipamentoModel');
+const Client = require('./clienteModel');
+const Employee = require('./funcionarioModel');
 
-const Certificate = sequelize.define('Certificate', {
+const Certificate = sequelize.define('certificados', {
   otherDetails: {
     type: DataTypes.TEXT,
     allowNull: true

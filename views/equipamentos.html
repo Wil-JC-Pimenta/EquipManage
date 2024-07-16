@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Equipamentos</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Equipamentos</h1>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/users">Usuários</a></li>
+        <li><a href="/clientes">Clientes</a></li>
+        <li><a href="/equipamentos">Equipamentos</a></li>
+        <li><a href="/funcionarios">Funcionários</a></li>
+        <li><a href="/certificados">Certificados</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <h2>Lista de Equipamentos</h2>
+    <table id="equipmentTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Descrição</th>
+          <th>Cliente</th>
+        </tr>
+      </thead>
+      <tbody id="equipmentList"></tbody>
+    </table>
+  </main>
+  <footer>
+    <p>&copy; 2024 Empresa XYZ. Todos os direitos reservados.</p>
+  </footer>
+  <script>
+    async function fetchEquipmentsAndClients() {
+      try {
+        const [equipmentResponse, clientResponse] = await Promise.all([
+          fetch('/api/equipamentos'),
+          fetch('/api/clientes')
+        ]);
+
+        const equipments = await equipmentResponse.json();
+        const clients = await clientResponse.json();
+
+        const clientMap = {};
+        clients.forEach(client => {
+          clientMap[client.id] = client.nome;
+        });
+
+        const equipmentList = document.getElementById('equipmentList');
+        equipments.forEach(equipment => {
+          const row = document.createElement('tr');
+
+          const formattedDescription = equipment.descricao.replace(/, /g, '\n');
+
+          row.innerHTML = `
+            <td>${equipment.id}</td>
+            <td>${equipment.nome}</td>
+            <td class="description">${formattedDescription}</td>
+            <td>${clientMap[equipment.clienteId] || 'Cliente não encontrado'}</td>
+          `;
+          equipmentList.appendChild(row);
+        });
+      } catch (error) {
+        console.error('Erro ao buscar equipamentos e clientes:', error);
+      }
+    }
+
+    fetchEquipmentsAndClients();
+  </script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Usuários</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Usuários</h1>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/users">Usuários</a></li>
+        <li><a href="/clientes">Clientes</a></li>
+        <li><a href="/equipamentos">Equipamentos</a></li>
+        <li><a href="/funcionarios">Funcionários</a></li>
+        <li><a href="/certificados">Certificados</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <h2>Lista de Usuários</h2>
+    <div id="userList"></div>
+  </main>
+  <footer>
+    <p>&copy; 2024 Empresa XYZ. Todos os direitos reservados.</p>
+  </footer>
+  <script>
+    fetch('/api/users')
+      .then(response => response.json())
+      .then(data => {
+        const userList = document.getElementById('userList');
+        data.forEach(user => {
+          const userDiv = document.createElement('div');
+          userDiv.textContent = `ID: ${user.id}, Name: ${user.name}, Email: ${user.email}`;
+          userList.appendChild(userDiv);
+        });
+      })
+      .catch(error => console.error('Erro ao buscar usuários:', error));
+  </script>
+</body>
+</html>
+

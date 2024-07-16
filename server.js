@@ -20,30 +20,42 @@ app.use((req, res, next) => {
   next();
 });
 
+// Servir arquivos estáticos da pasta views
+app.use(express.static(path.join(__dirname, 'views')));
+
 // Rota raiz para servir a página inicial
 app.get('/', (req, res) => {
-  res.send('Bem-vindo à página inicial!');
+  res.sendFile(path.join(__dirname, 'views/index.html'));
 });
 
-// Rota direta para /about
-app.get('/about', (req, res) => {
-  const filePath = path.join(__dirname, 'views/about.html');
-  console.log(`Servindo o arquivo: ${filePath}`);
-  res.sendFile(filePath, (err) => {
-    if (err) {
-      console.error(`Erro ao servir o arquivo ${filePath}:`, err);
-      res.status(err.status).end();
-    }
-  });
+// Rotas para as views
+app.get('/users', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views/users.html'));
 });
 
-// Usar as rotas
-app.use('/users', userRoutes);
-app.use('/admins', adminRoutes);
-app.use('/clientes', clienteRoutes);
-app.use('/equipamentos', equipamentoRoutes);
-app.use('/funcionarios', funcionarioRoutes);
-app.use('/certificados', certificadoRoutes);
+app.get('/clientes', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views/clientes.html'));
+});
+
+app.get('/equipamentos', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views/equipamentos.html'));
+});
+
+app.get('/funcionarios', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views/funcionarios.html'));
+});
+
+app.get('/certificados', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views/certificados.html'));
+});
+
+// Usar as rotas da API
+app.use('/api/users', userRoutes);
+app.use('/api/admins', adminRoutes);
+app.use('/api/clientes', clienteRoutes);
+app.use('/api/equipamentos', equipamentoRoutes);
+app.use('/api/funcionarios', funcionarioRoutes);
+app.use('/api/certificados', certificadoRoutes);
 
 // Sincronizar banco de dados e iniciar servidor
 sequelize.sync({ alter: true }).then(() => {

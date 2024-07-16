@@ -1,11 +1,9 @@
-// services/certificate.service.js
+const Certificate = require('../models/certificadoModel');
+const Equipment = require('../models/equipamentoModel');
+const Client = require('../models/clienteModel');
+const Employee = require('../models/funcionarioModel');
 
-const Certificate = require('../models/certificate.model');
-const Equipment = require('../models/equipment.model');
-const Client = require('../models/client.model');
-const Employee = require('../models/employee.model');
-
-class CertificateService {
+class CertificadoService {
   async createCertificate(data) {
     return await Certificate.create(data);
   }
@@ -40,4 +38,4 @@ class CertificateService {
   }
 }
 
-module.exports = new CertificateService();
+module.exports = new CertificadoService();
