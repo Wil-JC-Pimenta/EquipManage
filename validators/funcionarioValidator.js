@@ -1,9 +1,14 @@
-exports.validateFuncionario = (req, res, next) => {
-  const { name, email, role } = req.body;
+const { body, validationResult } = require('express-validator');
 
-  if (!name || !email || !role) {
-    return res.status(400).send('Nome, email e cargo são obrigatórios.');
-  }
-
-  next();
-};
+exports.validateFuncionario = [
+    body('name').notEmpty().withMessage('Nome é obrigatório'),
+    body('email').isEmail().withMessage('Email deve ser válido'),
+    body('role').notEmpty().withMessage('Cargo é obrigatório'),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+];
