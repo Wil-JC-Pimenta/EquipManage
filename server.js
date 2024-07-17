@@ -9,8 +9,8 @@ const adminRoutes = require('./routes/adminRoutes');
 const clienteRoutes = require('./routes/clienteRoutes');
 const equipamentoRoutes = require('./routes/equipamentoRoutes');
 const funcionarioRoutes = require('./routes/funcionarioRoutes');
-const certificadoRoutes = require('./routes/certificadoRoutes'); 
-const { User, Cliente, Equipamento, Certificado, Funcionario } = require('./models');
+const certificadoRoutes = require('./routes/certificadoRoutes');
+const { User, Cliente, Equipamento, Certificado } = require('./models');
 
 // Middleware para parsear JSON
 app.use(express.json());

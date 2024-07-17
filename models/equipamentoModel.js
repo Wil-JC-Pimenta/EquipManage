@@ -1,10 +1,16 @@
+// models/equipamentoModel.js
 const { DataTypes } = require('sequelize');
-const sequelize = require('./index');
+const sequelize = require('../models/index'); // Ajuste o caminho conforme necessário
 
 const Equipamento = sequelize.define('equipamentos', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
   nome: {
     type: DataTypes.STRING(255),
-    allowNull: true, // Permitir NULL inicialmente
+    allowNull: true,
   },
   descricao: {
     type: DataTypes.STRING(1000),
@@ -14,8 +20,20 @@ const Equipamento = sequelize.define('equipamentos', {
     type: DataTypes.INTEGER,
     references: {
       model: 'clientes',
-      key: 'id',
+      key: 'id'
     },
+    onDelete: 'NO ACTION',
+    onUpdate: 'CASCADE',
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW,
+  },
+  updatedAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW,
   },
 });
 

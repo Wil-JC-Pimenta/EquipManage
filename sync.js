@@ -9,7 +9,6 @@ sequelize.sync({ force: false }).then(async () => {
   // Atualize as linhas existentes para ter um valor na coluna 'nome'
   await Equipamento.update({ nome: 'valor padrão' }, { where: { nome: null } });
 
-  // Altere a coluna para ser NOT NULL
   await sequelize.getQueryInterface().changeColumn('equipamentos', 'nome', {
     type: DataTypes.STRING,
     allowNull: false,
