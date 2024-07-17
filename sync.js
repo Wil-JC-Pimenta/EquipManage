@@ -1,5 +1,5 @@
 // sync.js
-const sequelize = require('./index'); // Ajuste o caminho conforme necessário
+const sequelize = require('./index'); 
 const Cliente = require('./models/clienteModel');
 const Equipamento = require('./models/equipamentoModel');
 

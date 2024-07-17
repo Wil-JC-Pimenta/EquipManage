@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../models/index'); // Certifique-se de que o caminho esteja correto
+const sequelize = require('../models/index'); 
 
 const Cliente = sequelize.define('clientes', {
   name: {
