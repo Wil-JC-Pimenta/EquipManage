@@ -10,13 +10,21 @@ class CertificadoService {
 
   async getCertificates() {
     return await Certificate.findAll({
-      include: [Equipment, Client, Employee]
+      include: [
+        { model: Equipment, as: 'equipamento' },
+        { model: Client, as: 'cliente' },
+        { model: Employee, as: 'funcionario' }
+      ]
     });
   }
 
   async getCertificateById(id) {
     return await Certificate.findByPk(id, {
-      include: [Equipment, Client, Employee]
+      include: [
+        { model: Equipment, as: 'equipamento' },
+        { model: Client, as: 'cliente' },
+        { model: Employee, as: 'funcionario' }
+      ]
     });
   }
 

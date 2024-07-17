@@ -13,8 +13,8 @@ const Certificate = sequelize.define('certificados', {
   timestamps: true
 });
 
-Certificate.belongsTo(Equipment, { foreignKey: 'equipamento_id' });
-Certificate.belongsTo(Client, { foreignKey: 'cliente_id' });
-Certificate.belongsTo(Employee, { foreignKey: 'funcionario_id' });
+Certificate.belongsTo(Equipment, { as: 'equipamento', foreignKey: 'equipamento_id' });
+Certificate.belongsTo(Client, { as: 'cliente', foreignKey: 'cliente_id' });
+Certificate.belongsTo(Employee, { as: 'funcionario', foreignKey: 'funcionario_id' });
 
 module.exports = Certificate;

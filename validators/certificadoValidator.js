@@ -1,9 +1,9 @@
 const { body, validationResult } = require('express-validator');
 
 exports.validateCertificado = [
-  body('name').notEmpty().withMessage('Name is required'),
-  body('clientId').isInt().withMessage('Client ID must be an integer'),
-  body('equipmentId').isInt().withMessage('Equipment ID must be an integer'),
+  body('equipamento_id').isInt().withMessage('Equipment ID must be an integer'),
+  body('cliente_id').isInt().withMessage('Client ID must be an integer'),
+  body('funcionario_id').isInt().withMessage('Employee ID must be an integer'),
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

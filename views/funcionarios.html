@@ -90,7 +90,7 @@
       margin-bottom: 5px;
     }
 
-    form input {
+    form input, form textarea {
       margin-bottom: 15px;
       padding: 10px;
       font-size: 16px;
@@ -120,6 +120,56 @@
     }
 
     .actions .delete {
+      background-color: #f44336;
+      color: white;
+      border: none;
+    }
+
+    /* Popup */
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 20px;
+      border: 1px solid #ddd;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      z-index: 1000;
+      display: none;
+    }
+
+    .popup h3 {
+      margin-top: 0;
+    }
+
+    .popup .actions {
+      justify-content: flex-end;
+    }
+
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      display: none;
+    }
+
+    .popup button {
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .popup .confirm {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+    }
+
+    .popup .cancel {
       background-color: #f44336;
       color: white;
       border: none;
@@ -164,22 +214,39 @@
       <input type="text" id="role" name="role" required><br><br>
       <input type="submit" value="Adicionar">
     </form>
-    <h2>Atualizar Funcionário</h2>
-    <form id="updateEmployeeForm" style="display: none;">
-      <input type="hidden" id="updateId" name="id">
-      <label for="updateName">Nome:</label><br>
-      <input type="text" id="updateName" name="name" required><br>
-      <label for="updateEmail">Email:</label><br>
-      <input type="email" id="updateEmail" name="email" required><br>
-      <label for="updateRole">Função:</label><br>
-      <input type="text" id="updateRole" name="role" required><br><br>
-      <input type="submit" value="Atualizar">
-    </form>
+    <div class="popup-overlay" id="editPopupOverlay"></div>
+    <div class="popup" id="editPopup">
+      <h3>Editar Funcionário</h3>
+      <form id="updateEmployeeForm">
+        <input type="hidden" id="updateId" name="id">
+        <label for="updateName">Nome:</label><br>
+        <input type="text" id="updateName" name="name" required><br>
+        <label for="updateEmail">Email:</label><br>
+        <input type="email" id="updateEmail" name="email" required><br>
+        <label for="updateRole">Função:</label><br>
+        <input type="text" id="updateRole" name="role" required><br><br>
+        <div class="actions">
+          <button type="submit" class="confirm">Atualizar</button>
+          <button type="button" class="cancel" onclick="closeEditPopup()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+    <div class="popup-overlay" id="deletePopupOverlay"></div>
+    <div class="popup" id="deletePopup">
+      <h3>Confirmar Deleção</h3>
+      <p id="deleteMessage"></p>
+      <div class="actions">
+        <button class="confirm" onclick="confirmDelete()">Sim</button>
+        <button class="cancel" onclick="closeDeletePopup()">Não</button>
+      </div>
+    </div>
   </main>
   <footer>
     <p>&copy; 2024 Empresa XYZ. Todos os direitos reservados.</p>
   </footer>
   <script>
+    let employeeToDelete = null;
+
     async function fetchEmployees() {
       try {
         const response = await fetch('/api/funcionarios');
@@ -196,8 +263,8 @@
             <td>${employee.email}</td>
             <td>${employee.role || 'N/A'}</td>
             <td class="actions">
-              <button class="edit" onclick="editEmployee(${employee.id}, '${employee.name}', '${employee.email}', '${employee.role}')">Editar</button>
-              <button class="delete" onclick="deleteEmployee(${employee.id})">Deletar</button>
+              <button class="edit" onclick="showEditPopup(${employee.id}, '${employee.name}', '${employee.email}', '${employee.role}')">Editar</button>
+              <button class="delete" onclick="showDeletePopup(${employee.id}, '${employee.name}')">Deletar</button>
             </td>
           `;
           employeeList.appendChild(row);
@@ -227,6 +294,7 @@
 
         if (response.ok) {
           fetchEmployees();
+          document.getElementById('employeeForm').reset(); // Limpar o formulário após adicionar
         } else {
           console.error('Erro ao adicionar funcionário:', response.statusText);
         }
@@ -235,12 +303,18 @@
       }
     });
 
-    function editEmployee(id, name, email, role) {
+    function showEditPopup(id, name, email, role) {
       document.getElementById('updateId').value = id;
       document.getElementById('updateName').value = name;
       document.getElementById('updateEmail').value = email;
       document.getElementById('updateRole').value = role;
-      document.getElementById('updateEmployeeForm').style.display = 'block';
+      document.getElementById('editPopupOverlay').style.display = 'block';
+      document.getElementById('editPopup').style.display = 'block';
+    }
+
+    function closeEditPopup() {
+      document.getElementById('editPopupOverlay').style.display = 'none';
+      document.getElementById('editPopup').style.display = 'none';
     }
 
     document.getElementById('updateEmployeeForm').addEventListener('submit', async function(event) {
@@ -264,7 +338,7 @@
 
         if (response.ok) {
           fetchEmployees();
-          document.getElementById('updateEmployeeForm').style.display = 'none';
+          closeEditPopup();
         } else {
           console.error('Erro ao atualizar funcionário:', response.statusText);
         }
@@ -273,19 +347,35 @@
       }
     });
 
-    async function deleteEmployee(id) {
-      try {
-        const response = await fetch(`/api/funcionarios/${id}`, {
-          method: 'DELETE'
-        });
+    function showDeletePopup(id, name) {
+      employeeToDelete = id;
+      document.getElementById('deleteMessage').innerText = `Deseja realmente deletar o Funcionário: ${name}?`;
+      document.getElementById('deletePopupOverlay').style.display = 'block';
+      document.getElementById('deletePopup').style.display = 'block';
+    }
 
-        if (response.ok) {
-          fetchEmployees();
-        } else {
-          console.error('Erro ao deletar funcionário:', response.statusText);
+    function closeDeletePopup() {
+      document.getElementById('deletePopupOverlay').style.display = 'none';
+      document.getElementById('deletePopup').style.display = 'none';
+      employeeToDelete = null;
+    }
+
+    async function confirmDelete() {
+      if (employeeToDelete !== null) {
+        try {
+          const response = await fetch(`/api/funcionarios/${employeeToDelete}`, {
+            method: 'DELETE'
+          });
+
+          if (response.ok) {
+            fetchEmployees();
+            closeDeletePopup();
+          } else {
+            console.error('Erro ao deletar funcionário:', response.statusText);
+          }
+        } catch (error) {
+          console.error('Erro ao deletar funcionário:', error);
         }
-      } catch (error) {
-        console.error('Erro ao deletar funcionário:', error);
       }
     }
 

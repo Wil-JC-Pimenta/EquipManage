@@ -10,7 +10,7 @@ const clienteRoutes = require('./routes/clienteRoutes');
 const equipamentoRoutes = require('./routes/equipamentoRoutes');
 const funcionarioRoutes = require('./routes/funcionarioRoutes');
 const certificadoRoutes = require('./routes/certificadoRoutes');
-const { User, Cliente, Equipamento, Certificado } = require('./models');
+const { User, Cliente, Equipamento, Funcionario, Certificado } = require('./models');
 
 // Middleware para parsear JSON
 app.use(express.json());
@@ -58,16 +58,20 @@ app.use('/api/equipamentos', equipamentoRoutes);
 app.use('/api/funcionarios', funcionarioRoutes);
 app.use('/api/certificados', certificadoRoutes);
 
-// Rota para exibir a lista de certificados
+// Rota para exibir a lista de certificados com nomes correspondentes
 app.get('/certificados', async (req, res) => {
-  try {
-      const certificados = await Certificado.findAll({
-          include: [Cliente, Equipamento, Funcionario]
-      });
-      res.render('certificados', { certificados });
-  } catch (error) {
-      res.status(500).json({ error: 'Erro ao buscar certificados' });
-  }
+    try {
+        const certificados = await Certificado.findAll({
+            include: [
+                { model: Cliente, as: 'cliente' },
+                { model: Equipamento, as: 'equipamento' },
+                { model: Funcionario, as: 'funcionario' }
+            ]
+        });
+        res.json(certificados); // Alterado para res.json(certificados) para retornar JSON
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao buscar certificados' });
+    }
 });
 
 // Rotas de contagem

@@ -4,7 +4,183 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Certificados</title>
-  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #333;
+      color: white;
+      padding: 15px 0;
+    }
+
+    header h1 {
+      text-align: center;
+      margin: 0;
+    }
+
+    nav ul {
+      display: flex;
+      justify-content: center;
+      list-style-type: none;
+      padding: 0;
+    }
+
+    nav ul li {
+      margin: 0 15px;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+    }
+
+    main {
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 18px;
+      text-align: left;
+    }
+
+    table th, table td {
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+    }
+
+    table th {
+      background-color: #f2f2f2;
+    }
+
+    table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      background-color: #333;
+      color: white;
+      position: fixed;
+      width: 100%;
+      bottom: 0;
+    }
+
+    form {
+      margin: 20px 0;
+      display: flex;
+      flex-direction: column;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    form label {
+      margin-bottom: 5px;
+    }
+
+    form input, form textarea, form select {
+      margin-bottom: 15px;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    form textarea {
+      height: 100px;
+    }
+
+    form input[type="submit"] {
+      background-color: #333;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .actions button {
+      padding: 5px 10px;
+      cursor: pointer;
+      border: none;
+      color: white;
+    }
+
+    .actions .edit {
+      background-color: #4CAF50;
+    }
+
+    .actions .delete {
+      background-color: #f44336;
+    }
+
+    .description {
+      white-space: pre-line;
+    }
+
+    /* Popup */
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 20px;
+      border: 1px solid #ddd;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      z-index: 1000;
+      display: none;
+    }
+
+    .popup h3 {
+      margin-top: 0;
+    }
+
+    .popup .actions {
+      justify-content: flex-end;
+    }
+
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      display: none;
+    }
+
+    .popup button {
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .popup .confirm {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+    }
+
+    .popup .cancel {
+      background-color: #f44336;
+      color: white;
+      border: none;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -22,23 +198,203 @@
   </header>
   <main>
     <h2>Lista de Certificados</h2>
-    <div id="certificateList"></div>
+    <table id="certificateTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Equipamento</th>
+          <th>Cliente</th>
+          <th>Funcionário</th>
+          <th>Detalhes</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="certificateList"></tbody>
+    </table>
+    <h2>Adicionar Certificado</h2>
+    <form id="certificateForm">
+      <label for="equipamentoId">Equipamento ID:</label><br>
+      <input type="number" id="equipamentoId" name="equipamentoId" required><br>
+      <label for="clienteId">Cliente ID:</label><br>
+      <input type="number" id="clienteId" name="clienteId" required><br>
+      <label for="funcionarioId">Funcionário ID:</label><br>
+      <input type="number" id="funcionarioId" name="funcionarioId" required><br>
+      <label for="otherDetails">Detalhes:</label><br>
+      <textarea id="otherDetails" name="otherDetails" required></textarea><br><br>
+      <input type="submit" value="Adicionar">
+    </form>
+    <div class="popup-overlay" id="editPopupOverlay"></div>
+    <div class="popup" id="editPopup">
+      <h3>Editar Certificado</h3>
+      <form id="updateCertificateForm">
+        <input type="hidden" id="updateId" name="id">
+        <label for="updateEquipamentoId">Equipamento ID:</label><br>
+        <input type="number" id="updateEquipamentoId" name="equipamentoId" required><br>
+        <label for="updateClienteId">Cliente ID:</label><br>
+        <input type="number" id="updateClienteId" name="clienteId" required><br>
+        <label for="updateFuncionarioId">Funcionário ID:</label><br>
+        <input type="number" id="updateFuncionarioId" name="funcionarioId" required><br>
+        <label for="updateOtherDetails">Detalhes:</label><br>
+        <textarea id="updateOtherDetails" name="otherDetails" required></textarea><br><br>
+        <div class="actions">
+          <button type="submit" class="confirm">Atualizar</button>
+          <button type="button" class="cancel" onclick="closeEditPopup()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+    <div class="popup-overlay" id="deletePopupOverlay"></div>
+    <div class="popup" id="deletePopup">
+      <h3>Confirmar Deleção</h3>
+      <p id="deleteMessage"></p>
+      <div class="actions">
+        <button class="confirm" onclick="confirmDelete()">Sim</button>
+        <button class="cancel" onclick="closeDeletePopup()">Não</button>
+      </div>
+    </div>
   </main>
   <footer>
     <p>&copy; 2024 Empresa XYZ. Todos os direitos reservados.</p>
   </footer>
   <script>
-    fetch('/api/certificados')
-      .then(response => response.json())
-      .then(data => {
+    let certificateToDelete = null;
+
+    async function fetchCertificates() {
+      try {
+        const response = await fetch('/api/certificados');
+        const certificates = await response.json();
+
         const certificateList = document.getElementById('certificateList');
-        data.forEach(certificate => {
-          const certificateDiv = document.createElement('div');
-          certificateDiv.textContent = `ID: ${certificate.id}, Equipamento: ${certificate.equipamento.nome}, Cliente: ${certificate.cliente.name}, Funcionário: ${certificate.funcionario.name}, Detalhes: ${certificate.otherDetails}`;
-          certificateList.appendChild(certificateDiv);
+        certificateList.innerHTML = '';
+        certificates.forEach(certificate => {
+          const row = document.createElement('tr');
+
+          row.innerHTML = `
+            <td>${certificate.id}</td>
+            <td>${certificate.equipamento ? certificate.equipamento.nome : 'N/A'}</td>
+            <td>${certificate.cliente ? certificate.cliente.name : 'N/A'}</td>
+            <td>${certificate.funcionario ? certificate.funcionario.name : 'N/A'}</td>
+            <td class="description">${certificate.equipamento ? certificate.equipamento.descricao : 'N/A'}</td>
+            <td class="actions">
+              <button class="edit" onclick="showEditPopup(${certificate.id}, ${certificate.equipamento_id}, ${certificate.cliente_id}, ${certificate.funcionario_id}, '${certificate.otherDetails ? certificate.otherDetails.replace(/\n/g, '\\n') : ''}')">Editar</button>
+              <button class="delete" onclick="showDeletePopup(${certificate.id}, '${certificate.equipamento ? certificate.equipamento.nome : 'N/A'}')">Deletar</button>
+            </td>
+          `;
+          certificateList.appendChild(row);
         });
-      })
-      .catch(error => console.error('Erro ao buscar certificados:', error));
+      } catch (error) {
+        console.error('Erro ao buscar certificados:', error);
+      }
+    }
+
+    document.getElementById('certificateForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      const equipamento_id = document.getElementById('equipamentoId').value;
+      const cliente_id = document.getElementById('clienteId').value;
+      const funcionario_id = document.getElementById('funcionarioId').value;
+      const otherDetails = document.getElementById('otherDetails').value;
+
+      const newCertificate = { equipamento_id, cliente_id, funcionario_id, otherDetails };
+
+      try {
+        const response = await fetch('/api/certificados', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(newCertificate)
+        });
+
+        if (response.ok) {
+          fetchCertificates();
+          document.getElementById('certificateForm').reset(); // Limpar o formulário após adicionar
+        } else {
+          console.error('Erro ao adicionar certificado:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Erro ao adicionar certificado:', error);
+      }
+    });
+
+    function showEditPopup(id, equipamento_id, cliente_id, funcionario_id, otherDetails) {
+      document.getElementById('updateId').value = id;
+      document.getElementById('updateEquipamentoId').value = equipamento_id;
+      document.getElementById('updateClienteId').value = cliente_id;
+      document.getElementById('updateFuncionarioId').value = funcionario_id;
+      document.getElementById('updateOtherDetails').value = otherDetails.replace(/\\n/g, '\n');
+      document.getElementById('editPopupOverlay').style.display = 'block';
+      document.getElementById('editPopup').style.display = 'block';
+    }
+
+    function closeEditPopup() {
+      document.getElementById('editPopupOverlay').style.display = 'none';
+      document.getElementById('editPopup').style.display = 'none';
+    }
+
+    document.getElementById('updateCertificateForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      const id = document.getElementById('updateId').value;
+      const equipamento_id = document.getElementById('updateEquipamentoId').value;
+      const cliente_id = document.getElementById('updateClienteId').value;
+      const funcionario_id = document.getElementById('updateFuncionarioId').value;
+      const otherDetails = document.getElementById('updateOtherDetails').value;
+
+      const updatedCertificate = { equipamento_id, cliente_id, funcionario_id, otherDetails };
+
+      try {
+        const response = await fetch(`/api/certificados/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updatedCertificate)
+        });
+
+        if (response.ok) {
+          fetchCertificates();
+          closeEditPopup();
+        } else {
+          console.error('Erro ao atualizar certificado:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Erro ao atualizar certificado:', error);
+      }
+    });
+
+    function showDeletePopup(id, equipamentoNome) {
+      certificateToDelete = id;
+      document.getElementById('deleteMessage').innerText = `Deseja realmente deletar o Certificado do Equipamento: ${equipamentoNome}?`;
+      document.getElementById('deletePopupOverlay').style.display = 'block';
+      document.getElementById('deletePopup').style.display = 'block';
+    }
+
+    function closeDeletePopup() {
+      document.getElementById('deletePopupOverlay').style.display = 'none';
+      document.getElementById('deletePopup').style.display = 'none';
+      certificateToDelete = null;
+    }
+
+    async function confirmDelete() {
+      if (certificateToDelete !== null) {
+        try {
+          const response = await fetch(`/api/certificados/${certificateToDelete}`, {
+            method: 'DELETE'
+          });
+
+          if (response.ok) {
+            fetchCertificates();
+            closeDeletePopup();
+          } else {
+            console.error('Erro ao deletar certificado:', response.statusText);
+          }
+        } catch (error) {
+          console.error('Erro ao deletar certificado:', error);
+        }
+      }
+    }
+
+    fetchCertificates();
   </script>
 </body>
 </html>
