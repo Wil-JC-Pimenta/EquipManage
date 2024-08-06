@@ -1,8 +1,8 @@
 const { Sequelize } = require('sequelize');
-
 const sequelize = new Sequelize('nr13gestor', 'postgres', 'Database7894', {
   host: 'localhost',
   dialect: 'postgres',
+  port: 5432,
 });
 
 sequelize.authenticate()

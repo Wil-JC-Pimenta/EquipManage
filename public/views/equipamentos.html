@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="styles.css">
-  <title>Clientes</title>
-  </head>
+  <link rel="stylesheet" href="./styles/styles.css">
+  <title>Equipamentos</title>
+</head>
 <body>
   <header>
     <h1>EquipManage</h1>
@@ -17,46 +17,46 @@
         <li><a href="/users">Usuários</a></li>
         <li><a href="/clientes">Clientes</a></li>
         <li><a href="/equipamentos">Equipamentos</a></li>
-        <li><a href="/funcionarios">Equipe Técnica</a></li>
+        <li><a href="/funcionarios">Funcionários</a></li>
         <li><a href="/certificados">Certificados</a></li>
       </ul>
     </nav>
   </header>
   <main>
-    <h2>Lista de Clientes</h2>
-    <table id="clientTable">
+    <h2>Lista de Equipamentos</h2>
+    <table id="equipmentTable">
       <thead>
         <tr>
           <th>ID</th>
           <th>Nome</th>
-          <th>Email</th>
-          <th>Endereço</th>
+          <th>Descrição</th>
+          <th>Cliente</th>
           <th>Ações</th>
         </tr>
       </thead>
-      <tbody id="clientList"></tbody>
+      <tbody id="equipmentList"></tbody>
     </table>
-    <h2>Adicionar Cliente</h2>
-    <form id="clientForm">
-      <label for="name">Nome:</label><br>
-      <input type="text" id="name" name="name" required><br>
-      <label for="email">Email:</label><br>
-      <input type="email" id="email" name="email" required><br>
-      <label for="address">Endereço:</label><br>
-      <input type="text" id="address" name="address" required><br><br>
+    <h2>Adicionar Equipamento</h2>
+    <form id="equipmentForm">
+      <label for="nome">Nome:</label><br>
+      <input type="text" id="nome" name="nome" required><br>
+      <label for="descricao">Descrição:</label><br>
+      <textarea id="descricao" name="descricao" required></textarea><br>
+      <label for="clienteId">Cliente ID:</label><br>
+      <input type="number" id="clienteId" name="clienteId" required><br><br>
       <input type="submit" value="Adicionar">
     </form>
     <div class="popup-overlay" id="editPopupOverlay"></div>
     <div class="popup" id="editPopup">
-      <h3>Editar Cliente</h3>
-      <form id="updateClientForm">
+      <h3>Editar Equipamento</h3>
+      <form id="updateEquipmentForm">
         <input type="hidden" id="updateId" name="id">
-        <label for="updateName">Nome:</label><br>
-        <input type="text" id="updateName" name="name" required><br>
-        <label for="updateEmail">Email:</label><br>
-        <input type="email" id="updateEmail" name="email" required><br>
-        <label for="updateAddress">Endereço:</label><br>
-        <input type="text" id="updateAddress" name="address" required><br><br>
+        <label for="updateNome">Nome:</label><br>
+        <input type="text" id="updateNome" name="nome" required><br>
+        <label for="updateDescricao">Descrição:</label><br>
+        <textarea id="updateDescricao" name="descricao" required></textarea><br>
+        <label for="updateClienteId">Cliente ID:</label><br>
+        <input type="number" id="updateClienteId" name="clienteId" required><br><br>
         <div class="actions">
           <button type="submit" class="confirm">Atualizar</button>
           <button type="button" class="cancel" onclick="closeEditPopup()">Cancelar</button>
@@ -134,70 +134,73 @@
           <!--end footer col-->
       </div>
   </div>
+  </footer>
   <script>
-    let clientToDelete = null;
+    let equipmentToDelete = null;
 
-    async function fetchClients() {
+    async function fetchEquipments() {
       try {
-        const response = await fetch('/api/clientes');
-        const clients = await response.json();
+        const response = await fetch('/api/equipamentos');
+        const equipments = await response.json();
 
-        const clientList = document.getElementById('clientList');
-        clientList.innerHTML = '';
-        clients.forEach(client => {
+        const equipmentList = document.getElementById('equipmentList');
+        equipmentList.innerHTML = '';
+        equipments.forEach(equipment => {
           const row = document.createElement('tr');
 
+          const formattedDescription = formatDescription(equipment.descricao);
+
           row.innerHTML = `
-            <td>${client.id}</td>
-            <td>${client.name}</td>
-            <td>${client.email}</td>
-            <td>${client.address}</td>
+            <td>${equipment.id}</td>
+            <td>${equipment.nome}</td>
+            <td class="description">${formattedDescription}</td>
+            <td>${equipment.clienteId} - ${equipment.cliente ? equipment.cliente.name : 'N/A'}</td>
             <td class="actions">
-              <button class="edit" onclick="showEditPopup(${client.id}, '${client.name}', '${client.email}', '${client.address}')">Editar</button>
-              <button class="delete" onclick="showDeletePopup(${client.id}, '${client.name}')">Deletar</button>
+              <button class="edit" onclick="showEditPopup(${equipment.id}, '${equipment.nome}', '${formattedDescription.replace(/\n/g, '\\n')}', ${equipment.clienteId})">Editar</button>
+              <button class="delete" onclick="showDeletePopup(${equipment.id}, '${equipment.nome}')">Deletar</button>
             </td>
           `;
-          clientList.appendChild(row);
+          equipmentList.appendChild(row);
         });
       } catch (error) {
-        console.error('Erro ao buscar clientes:', error);
+        console.error('Erro ao buscar equipamentos:', error);
       }
     }
 
-    document.getElementById('clientForm').addEventListener('submit', async function(event) {
+    document.getElementById('equipmentForm').addEventListener('submit', async function(event) {
       event.preventDefault();
 
-      const name = document.getElementById('name').value;
-      const email = document.getElementById('email').value;
-      const address = document.getElementById('address').value;
+      const nome = document.getElementById('nome').value;
+      const descricao = document.getElementById('descricao').value;
+      const clienteId = document.getElementById('clienteId').value;
 
-      const newClient = { name, email, address };
+      const newEquipment = { nome, descricao, clienteId };
 
       try {
-        const response = await fetch('/api/clientes', {
+        const response = await fetch('/api/equipamentos', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(newClient)
+          body: JSON.stringify(newEquipment)
         });
 
         if (response.ok) {
-          fetchClients();
-          document.getElementById('clientForm').reset();
+          fetchEquipments();
+          document.getElementById('equipmentForm').reset(); // Limpar o formulário após adicionar
         } else {
-          console.error('Erro ao adicionar cliente:', response.statusText);
+          console.error('Erro ao adicionar equipamento:', response.statusText);
         }
       } catch (error) {
-        console.error('Erro ao adicionar cliente:', error);
+        console.error('Erro ao adicionar equipamento:', error);
       }
     });
 
-    function showEditPopup(id, name, email, address) {
+    function showEditPopup(id, nome, descricao, clienteId) {
       document.getElementById('updateId').value = id;
-      document.getElementById('updateName').value = name;
-      document.getElementById('updateEmail').value = email;
-      document.getElementById('updateAddress').value = address;
+      document.getElementById('updateNome').value = nome;
+      document.getElementById('updateDescricao').value = descricao.replace(/\\n/g, '\n');
+      document.getElementById('updateClienteId').value = clienteId;
       document.getElementById('editPopupOverlay').style.display = 'block';
       document.getElementById('editPopup').style.display = 'block';
     }
@@ -207,39 +210,39 @@
       document.getElementById('editPopup').style.display = 'none';
     }
 
-    document.getElementById('updateClientForm').addEventListener('submit', async function(event) {
+    document.getElementById('updateEquipmentForm').addEventListener('submit', async function(event) {
       event.preventDefault();
 
       const id = document.getElementById('updateId').value;
-      const name = document.getElementById('updateName').value;
-      const email = document.getElementById('updateEmail').value;
-      const address = document.getElementById('updateAddress').value;
+      const nome = document.getElementById('updateNome').value;
+      const descricao = document.getElementById('updateDescricao').value;
+      const clienteId = document.getElementById('updateClienteId').value;
 
-      const updatedClient = { name, email, address };
+      const updatedEquipment = { nome, descricao, clienteId };
 
       try {
-        const response = await fetch(`/api/clientes/${id}`, {
+        const response = await fetch(`/api/equipamentos/${id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(updatedClient)
+          body: JSON.stringify(updatedEquipment)
         });
 
         if (response.ok) {
-          fetchClients();
+          fetchEquipments();
           closeEditPopup();
         } else {
-          console.error('Erro ao atualizar cliente:', response.statusText);
+          console.error('Erro ao atualizar equipamento:', response.statusText);
         }
       } catch (error) {
-        console.error('Erro ao atualizar cliente:', error);
+        console.error('Erro ao atualizar equipamento:', error);
       }
     });
 
-    function showDeletePopup(id, name) {
-      clientToDelete = id;
-      document.getElementById('deleteMessage').innerText = `Tem certeza que deseja deletar o cliente ${name}?`;
+    function showDeletePopup(id, nome) {
+      equipmentToDelete = id;
+      document.getElementById('deleteMessage').innerText = `Deseja realmente deletar o Equipamento: ${nome}?`;
       document.getElementById('deletePopupOverlay').style.display = 'block';
       document.getElementById('deletePopup').style.display = 'block';
     }
@@ -247,31 +250,33 @@
     function closeDeletePopup() {
       document.getElementById('deletePopupOverlay').style.display = 'none';
       document.getElementById('deletePopup').style.display = 'none';
-      clientToDelete = null;
+      equipmentToDelete = null;
     }
 
     async function confirmDelete() {
-      if (clientToDelete !== null) {
+      if (equipmentToDelete !== null) {
         try {
-          console.log(`Deleting client with ID: ${clientToDelete}`);
-          const response = await fetch(`/api/clientes/${clientToDelete}`, {
+          const response = await fetch(`/api/equipamentos/${equipmentToDelete}`, {
             method: 'DELETE'
           });
 
           if (response.ok) {
-            console.log(`Client with ID: ${clientToDelete} deleted successfully`);
-            fetchClients();
+            fetchEquipments();
             closeDeletePopup();
           } else {
-            console.error('Erro ao deletar cliente:', response.statusText);
+            console.error('Erro ao deletar equipamento:', response.statusText);
           }
         } catch (error) {
-          console.error('Erro ao deletar cliente:', error);
+          console.error('Erro ao deletar equipamento:', error);
         }
       }
     }
 
-    fetchClients();
+    function formatDescription(description) {
+      return description ? description.replace(/, /g, '\n') : '';
+    }
+
+    fetchEquipments();
   </script>
 </body>
 </html>

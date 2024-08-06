@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="styles.css">
-  <title>Equipamentos</title>
+  <link rel="stylesheet" href="./styles/styles.css">
+  <title>Certificados</title>
 </head>
 <body>
   <header>
@@ -17,46 +17,51 @@
         <li><a href="/users">Usuários</a></li>
         <li><a href="/clientes">Clientes</a></li>
         <li><a href="/equipamentos">Equipamentos</a></li>
-        <li><a href="/funcionarios">Funcionários</a></li>
+        <li><a href="/funcionarios">Equipe Técnica</a></li>
         <li><a href="/certificados">Certificados</a></li>
       </ul>
     </nav>
   </header>
   <main>
-    <h2>Lista de Equipamentos</h2>
-    <table id="equipmentTable">
+    <h2>Lista de Certificados</h2>
+    <table id="certificateTable">
       <thead>
         <tr>
           <th>ID</th>
-          <th>Nome</th>
-          <th>Descrição</th>
+          <th>Equipamento</th>
           <th>Cliente</th>
+          <th>Funcionário</th>
+          <th>Detalhes</th>
           <th>Ações</th>
         </tr>
       </thead>
-      <tbody id="equipmentList"></tbody>
+      <tbody id="certificateList"></tbody>
     </table>
-    <h2>Adicionar Equipamento</h2>
-    <form id="equipmentForm">
-      <label for="nome">Nome:</label><br>
-      <input type="text" id="nome" name="nome" required><br>
-      <label for="descricao">Descrição:</label><br>
-      <textarea id="descricao" name="descricao" required></textarea><br>
+    <h2>Adicionar Certificado</h2>
+    <form id="certificateForm">
+      <label for="equipamentoId">Equipamento ID:</label><br>
+      <input type="number" id="equipamentoId" name="equipamentoId" required><br>
       <label for="clienteId">Cliente ID:</label><br>
-      <input type="number" id="clienteId" name="clienteId" required><br><br>
+      <input type="number" id="clienteId" name="clienteId" required><br>
+      <label for="funcionarioId">Funcionário ID:</label><br>
+      <input type="number" id="funcionarioId" name="funcionarioId" required><br>
+      <label for="otherDetails">Detalhes:</label><br>
+      <textarea id="otherDetails" name="otherDetails" required></textarea><br><br>
       <input type="submit" value="Adicionar">
     </form>
     <div class="popup-overlay" id="editPopupOverlay"></div>
     <div class="popup" id="editPopup">
-      <h3>Editar Equipamento</h3>
-      <form id="updateEquipmentForm">
+      <h3>Editar Certificado</h3>
+      <form id="updateCertificateForm">
         <input type="hidden" id="updateId" name="id">
-        <label for="updateNome">Nome:</label><br>
-        <input type="text" id="updateNome" name="nome" required><br>
-        <label for="updateDescricao">Descrição:</label><br>
-        <textarea id="updateDescricao" name="descricao" required></textarea><br>
+        <label for="updateEquipamentoId">Equipamento ID:</label><br>
+        <input type="number" id="updateEquipamentoId" name="equipamentoId" required><br>
         <label for="updateClienteId">Cliente ID:</label><br>
-        <input type="number" id="updateClienteId" name="clienteId" required><br><br>
+        <input type="number" id="updateClienteId" name="clienteId" required><br>
+        <label for="updateFuncionarioId">Funcionário ID:</label><br>
+        <input type="number" id="updateFuncionarioId" name="funcionarioId" required><br>
+        <label for="updateOtherDetails">Detalhes:</label><br>
+        <textarea id="updateOtherDetails" name="otherDetails" required></textarea><br><br>
         <div class="actions">
           <button type="submit" class="confirm">Atualizar</button>
           <button type="button" class="cancel" onclick="closeEditPopup()">Cancelar</button>
@@ -136,71 +141,72 @@
   </div>
   </footer>
   <script>
-    let equipmentToDelete = null;
+    let certificateToDelete = null;
 
-    async function fetchEquipments() {
+    async function fetchCertificates() {
       try {
-        const response = await fetch('/api/equipamentos');
-        const equipments = await response.json();
+        const response = await fetch('/api/certificados');
+        const certificates = await response.json();
 
-        const equipmentList = document.getElementById('equipmentList');
-        equipmentList.innerHTML = '';
-        equipments.forEach(equipment => {
+        const certificateList = document.getElementById('certificateList');
+        certificateList.innerHTML = '';
+        certificates.forEach(certificate => {
           const row = document.createElement('tr');
 
-          const formattedDescription = formatDescription(equipment.descricao);
-
           row.innerHTML = `
-            <td>${equipment.id}</td>
-            <td>${equipment.nome}</td>
-            <td class="description">${formattedDescription}</td>
-            <td>${equipment.clienteId} - ${equipment.cliente ? equipment.cliente.name : 'N/A'}</td>
+            <td>${certificate.id}</td>
+            <td>${certificate.equipamento ? certificate.equipamento.nome : 'N/A'}</td>
+            <td>${certificate.cliente ? certificate.cliente.name : 'N/A'}</td>
+            <td>${certificate.funcionario ? certificate.funcionario.name : 'N/A'}</td>
+            <td class="description">${certificate.equipamento ? certificate.equipamento.descricao : 'N/A'}</td>
             <td class="actions">
-              <button class="edit" onclick="showEditPopup(${equipment.id}, '${equipment.nome}', '${formattedDescription.replace(/\n/g, '\\n')}', ${equipment.clienteId})">Editar</button>
-              <button class="delete" onclick="showDeletePopup(${equipment.id}, '${equipment.nome}')">Deletar</button>
+              <button class="edit" onclick="showEditPopup(${certificate.id}, ${certificate.equipamento_id}, ${certificate.cliente_id}, ${certificate.funcionario_id}, '${certificate.otherDetails ? certificate.otherDetails.replace(/\n/g, '\\n') : ''}')">Editar</button>
+              <button class="delete" onclick="showDeletePopup(${certificate.id}, '${certificate.equipamento ? certificate.equipamento.nome : 'N/A'}')">Deletar</button>
             </td>
           `;
-          equipmentList.appendChild(row);
+          certificateList.appendChild(row);
         });
       } catch (error) {
-        console.error('Erro ao buscar equipamentos:', error);
+        console.error('Erro ao buscar certificados:', error);
       }
     }
 
-    document.getElementById('equipmentForm').addEventListener('submit', async function(event) {
+    document.getElementById('certificateForm').addEventListener('submit', async function(event) {
       event.preventDefault();
 
-      const nome = document.getElementById('nome').value;
-      const descricao = document.getElementById('descricao').value;
-      const clienteId = document.getElementById('clienteId').value;
+      const equipamento_id = document.getElementById('equipamentoId').value;
+      const cliente_id = document.getElementById('clienteId').value;
+      const funcionario_id = document.getElementById('funcionarioId').value;
+      const otherDetails = document.getElementById('otherDetails').value;
 
-      const newEquipment = { nome, descricao, clienteId };
+      const newCertificate = { equipamento_id, cliente_id, funcionario_id, otherDetails };
 
       try {
-        const response = await fetch('/api/equipamentos', {
+        const response = await fetch('/api/certificados', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(newEquipment)
+          body: JSON.stringify(newCertificate)
         });
 
         if (response.ok) {
-          fetchEquipments();
-          document.getElementById('equipmentForm').reset(); // Limpar o formulário após adicionar
+          fetchCertificates();
+          document.getElementById('certificateForm').reset(); // Limpar o formulário após adicionar
         } else {
-          console.error('Erro ao adicionar equipamento:', response.statusText);
+          console.error('Erro ao adicionar certificado:', response.statusText);
         }
       } catch (error) {
-        console.error('Erro ao adicionar equipamento:', error);
+        console.error('Erro ao adicionar certificado:', error);
       }
     });
 
-    function showEditPopup(id, nome, descricao, clienteId) {
+    function showEditPopup(id, equipamento_id, cliente_id, funcionario_id, otherDetails) {
       document.getElementById('updateId').value = id;
-      document.getElementById('updateNome').value = nome;
-      document.getElementById('updateDescricao').value = descricao.replace(/\\n/g, '\n');
-      document.getElementById('updateClienteId').value = clienteId;
+      document.getElementById('updateEquipamentoId').value = equipamento_id;
+      document.getElementById('updateClienteId').value = cliente_id;
+      document.getElementById('updateFuncionarioId').value = funcionario_id;
+      document.getElementById('updateOtherDetails').value = otherDetails.replace(/\\n/g, '\n');
       document.getElementById('editPopupOverlay').style.display = 'block';
       document.getElementById('editPopup').style.display = 'block';
     }
@@ -210,39 +216,40 @@
       document.getElementById('editPopup').style.display = 'none';
     }
 
-    document.getElementById('updateEquipmentForm').addEventListener('submit', async function(event) {
+    document.getElementById('updateCertificateForm').addEventListener('submit', async function(event) {
       event.preventDefault();
 
       const id = document.getElementById('updateId').value;
-      const nome = document.getElementById('updateNome').value;
-      const descricao = document.getElementById('updateDescricao').value;
-      const clienteId = document.getElementById('updateClienteId').value;
+      const equipamento_id = document.getElementById('updateEquipamentoId').value;
+      const cliente_id = document.getElementById('updateClienteId').value;
+      const funcionario_id = document.getElementById('updateFuncionarioId').value;
+      const otherDetails = document.getElementById('updateOtherDetails').value;
 
-      const updatedEquipment = { nome, descricao, clienteId };
+      const updatedCertificate = { equipamento_id, cliente_id, funcionario_id, otherDetails };
 
       try {
-        const response = await fetch(`/api/equipamentos/${id}`, {
+        const response = await fetch(`/api/certificados/${id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(updatedEquipment)
+          body: JSON.stringify(updatedCertificate)
         });
 
         if (response.ok) {
-          fetchEquipments();
+          fetchCertificates();
           closeEditPopup();
         } else {
-          console.error('Erro ao atualizar equipamento:', response.statusText);
+          console.error('Erro ao atualizar certificado:', response.statusText);
         }
       } catch (error) {
-        console.error('Erro ao atualizar equipamento:', error);
+        console.error('Erro ao atualizar certificado:', error);
       }
     });
 
-    function showDeletePopup(id, nome) {
-      equipmentToDelete = id;
-      document.getElementById('deleteMessage').innerText = `Deseja realmente deletar o Equipamento: ${nome}?`;
+    function showDeletePopup(id, equipamentoNome) {
+      certificateToDelete = id;
+      document.getElementById('deleteMessage').innerText = `Deseja realmente deletar o Certificado do Equipamento: ${equipamentoNome}?`;
       document.getElementById('deletePopupOverlay').style.display = 'block';
       document.getElementById('deletePopup').style.display = 'block';
     }
@@ -250,33 +257,29 @@
     function closeDeletePopup() {
       document.getElementById('deletePopupOverlay').style.display = 'none';
       document.getElementById('deletePopup').style.display = 'none';
-      equipmentToDelete = null;
+      certificateToDelete = null;
     }
 
     async function confirmDelete() {
-      if (equipmentToDelete !== null) {
+      if (certificateToDelete !== null) {
         try {
-          const response = await fetch(`/api/equipamentos/${equipmentToDelete}`, {
+          const response = await fetch(`/api/certificados/${certificateToDelete}`, {
             method: 'DELETE'
           });
 
           if (response.ok) {
-            fetchEquipments();
+            fetchCertificates();
             closeDeletePopup();
           } else {
-            console.error('Erro ao deletar equipamento:', response.statusText);
+            console.error('Erro ao deletar certificado:', response.statusText);
           }
         } catch (error) {
-          console.error('Erro ao deletar equipamento:', error);
+          console.error('Erro ao deletar certificado:', error);
         }
       }
     }
 
-    function formatDescription(description) {
-      return description ? description.replace(/, /g, '\n') : '';
-    }
-
-    fetchEquipments();
+    fetchCertificates();
   </script>
 </body>
 </html>
