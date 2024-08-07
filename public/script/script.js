@@ -3,10 +3,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const conversionFactor = 0.0980665;
 
     function calculateResults() {
-        // Supondo que você tenha valores de entrada para a medição
-        const inicioAbertura = parseFloat(document.querySelector('input[data-kgf="inicio-abertura"]').value) || 0;
-        const aberturaReal = parseFloat(document.querySelector('input[data-kgf="abertura-real"]').value) || 0;
-        const aberturaTeorica = 98; // Valor teórico ou esperado
+        // Função para converter texto para float, considerando vírgula como separador decimal
+        function parseInputValue(value) {
+            return parseFloat(value.replace(',', '.')) || 0;
+        }
+
+        // Capturando valores de entrada
+        const inicioAbertura = parseInputValue(document.querySelector('input[data-kgf="inicio-abertura"]').value);
+        const abertura = parseInputValue(document.querySelector('input[data-kgf="abertura"]').value);
+        const aberturaReal = parseInputValue(document.querySelector('input[data-kgf="abertura-real"]').value);
+        const fechamento = parseInputValue(document.querySelector('input[data-kgf="fechamento"]').value);
 
         // Incertezas padrão (valores de exemplo)
         const uInstrument = 0.01;
@@ -23,18 +29,18 @@ document.addEventListener('DOMContentLoaded', function () {
         const uExpanded = uCombined * kFactor;
 
         // Calculando o erro
-        const erro = (inicioAbertura - aberturaReal - (aberturaTeorica - aberturaReal)).toFixed(3);
+        const erro = (aberturaReal - abertura).toFixed(2);
 
         // Atualizando os valores nos campos
         document.getElementById('erro').value = erro;
-        document.getElementById('u').value = uCombined.toFixed(3);
-        document.getElementById('k').value = uExpanded.toFixed(3);
+        document.getElementById('u').value = uCombined.toFixed(3).replace('.', ',');
+        document.getElementById('k').value = uExpanded.toFixed(3).replace('.', ',');
 
         // Convertendo valores para MPa e atualizando os campos correspondentes
-        document.querySelector('input[data-mpa="inicio-abertura"]').value = (inicioAbertura * conversionFactor).toFixed(3);
-        document.querySelector('input[data-mpa="abertura"]').value = (parseFloat(document.querySelector('input[data-kgf="abertura"]').value) * conversionFactor).toFixed(3);
-        document.querySelector('input[data-mpa="abertura-real"]').value = (aberturaReal * conversionFactor).toFixed(3);
-        document.querySelector('input[data-mpa="fechamento"]').value = (parseFloat(document.querySelector('input[data-kgf="fechamento"]').value) * conversionFactor).toFixed(3);
+        document.querySelector('input[data-mpa="inicio-abertura"]').value = (inicioAbertura * conversionFactor).toFixed(3).replace('.', ',');
+        document.querySelector('input[data-mpa="abertura"]').value = (abertura * conversionFactor).toFixed(3).replace('.', ',');
+        document.querySelector('input[data-mpa="abertura-real"]').value = (aberturaReal * conversionFactor).toFixed(3).replace('.', ',');
+        document.querySelector('input[data-mpa="fechamento"]').value = (fechamento * conversionFactor).toFixed(3).replace('.', ',');
     }
 
     document.querySelectorAll('input[data-kgf]').forEach(input => {
@@ -92,8 +98,6 @@ document.addEventListener('DOMContentLoaded', function () {
     calculateResults();
 });
 
-
-
 function enviarDados(dados) {
     fetch('https://seuservidor.com/api/salvar', {
         method: 'POST',
@@ -132,4 +136,3 @@ function coletarDados() {
 }
 
 document.getElementById('btn-gerar-pdf').addEventListener('click', coletarDados);
-
