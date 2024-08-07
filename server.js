@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const mongoose = require('mongoose');
 const app = express();
 const port = process.env.PORT || 3001;
 
@@ -9,8 +10,20 @@ const adminRoutes = require('./routes/adminRoutes');
 const clienteRoutes = require('./routes/clienteRoutes');
 const equipamentoRoutes = require('./routes/equipamentoRoutes');
 const funcionarioRoutes = require('./routes/funcionarioRoutes');
-const certificadoRoutes = require('./routes/certificadoRoutes');
-const { User, Cliente, Equipamento, Funcionario, Certificado } = require('./config/database/sequelize');
+const certificadoRoutes = require('./routes/certificadoRoutes'); // Remover esta linha duplicada
+
+// Conectar ao MongoDB
+mongoose.connect('mongodb://localhost:27017/certificadonr13', { useNewUrlParser: true, useUnifiedTopology: true });
+
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'Erro na conexão ao MongoDB:'));
+db.once('open', () => {
+  console.log('Conectado ao MongoDB');
+});
+
+// Use a rota correta
+const certificadonr13Routes = require('./routes/certificadonr13Routes');
+app.use('/api/certificadonr13', certificadonr13Routes);
 
 // Middleware para parsear JSON
 app.use(express.json());

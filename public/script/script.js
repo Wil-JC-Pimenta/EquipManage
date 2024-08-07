@@ -91,3 +91,45 @@ document.addEventListener('DOMContentLoaded', function () {
     // Chamando a função para calcular e atualizar os resultados
     calculateResults();
 });
+
+
+
+function enviarDados(dados) {
+    fetch('https://seuservidor.com/api/salvar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dados)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Dados enviados com sucesso:', data);
+    })
+    .catch(error => {
+        console.error('Erro ao enviar dados:', error);
+    });
+}
+
+function coletarDados() {
+    const dados = {
+        registroEntrada: document.querySelector('input[data-kgf="inicio-abertura"]').value,
+        patrimonio: document.querySelector('input[data-kgf="abertura"]').value,
+        contrato: document.querySelector('input[data-kgf="abertura-real"]').value,
+        cliente: document.querySelector('input[data-kgf="fechamento"]').value,
+        fabricante: document.querySelector('input[data-mpa="inicio-abertura"]').value,
+        modelo: document.querySelector('input[data-mpa="abertura"]').value,
+        serie: document.querySelector('input[data-mpa="abertura-real"]').value,
+        ajuste: document.querySelector('input[data-mpa="fechamento"]').value,
+        erro: document.getElementById('erro').value,
+        u: document.getElementById('u').value,
+        k: document.getElementById('k').value,
+        observacoes: document.getElementById('observacoes').value
+    };
+    
+    console.log(dados);
+    enviarDados(dados);
+}
+
+document.getElementById('btn-gerar-pdf').addEventListener('click', coletarDados);
+
