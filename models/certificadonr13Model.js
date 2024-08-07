@@ -1,66 +1,59 @@
-const mongoose = require('mongoose');
-
-const CertificadoNR13Schema = new mongoose.Schema({
-  registroEntrada: String,
-  numeroPatrimonio: String,
-  numeroContrato: String,
-  cliente: String,
-  instrumento: String,
-  tag: String,
-  tagVaso: String,
-  fabricante: String,
-  modelo: String,
-  numeroSerie: String,
-  pressaoAjuste: String,
-  diametro: String,
-  diametroOrificio: String,
-  tipo: String,
-  cor: String,
-  fluido: String,
-  vazao: String,
-  contraPressao: String,
-  temperaturaOperacao: String,
-  certificado: String,
-  equipamento: String,
-  patrimonio: String,
-  validade: String,
-  procedimentosUtilizados: String,
-  temperaturaAmbiente: String,
-  humidadeRelativa: String,
-  local: String,
-  dataEnsaio: Date,
-  proximoEnsaio: Date,
-  resultadosEnsaio: {
-    antesAjuste: {
-      valorInicioAberturaKgf: String,
-      valorAberturaKgf: String,
-      valorAberturaRealKgf: String,
-      valorFechamentoKgf: String,
-      valorInicioAberturaMpa: String,
-      valorAberturaMpa: String,
-      valorAberturaRealMpa: String,
-      valorFechamentoMpa: String,
-      erroKgf: String,
-      uKgf: String,
-      kKgf: String
-    },
-    depoisAjuste: {
-      valorInicioAberturaKgf: String,
-      valorAberturaKgf: String,
-      valorAberturaRealKgf: String,
-      valorFechamentoKgf: String,
-      valorInicioAberturaMpa: String,
-      valorAberturaMpa: String,
-      valorAberturaRealMpa: String,
-      valorFechamentoMpa: String,
-      erroKgf: String,
-      uKgf: String,
-      kKgf: String
+'use strict';
+const { Model } = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+  class CertificadoNR13 extends Model {
+    static associate(models) {
+      // define association here
     }
-  },
-  numeroLacre: String,
-  observacoes: String,
-  servicosExecutados: [String]
-});
-
-module.exports = mongoose.model('CertificadoNR13', CertificadoNR13Schema);
+  }
+  CertificadoNR13.init({
+    registroEntrada: DataTypes.STRING,
+    numeroPatrimonio: DataTypes.STRING,
+    numeroContrato: DataTypes.STRING,
+    cliente: DataTypes.STRING,
+    instrumento: DataTypes.STRING,
+    tag: DataTypes.STRING,
+    tagVaso: DataTypes.STRING,
+    fabricante: DataTypes.STRING,
+    modelo: DataTypes.STRING,
+    numeroSerie: DataTypes.STRING,
+    pressaoAjuste: DataTypes.DECIMAL(10, 2),
+    diametro: DataTypes.DECIMAL(10, 2),
+    diametroOrificio: DataTypes.DECIMAL(10, 2),
+    tipo: DataTypes.STRING,
+    cor: DataTypes.STRING,
+    fluido: DataTypes.STRING,
+    vazao: DataTypes.DECIMAL(10, 2),
+    contraPressao: DataTypes.DECIMAL(10, 2),
+    temperaturaOperacao: DataTypes.DECIMAL(10, 2),
+    certificado: DataTypes.STRING,
+    equipamento: DataTypes.STRING,
+    patrimonio: DataTypes.STRING,
+    validade: DataTypes.DATE,
+    procedimentosUtilizados: DataTypes.TEXT,
+    temperaturaAmbiente: DataTypes.DECIMAL(10, 2),
+    humidadeRelativa: DataTypes.DECIMAL(10, 2),
+    local: DataTypes.STRING,
+    dataEnsaio: DataTypes.DATE,
+    proximoEnsaio: DataTypes.DATE,
+    valorInicioAberturaKgf: DataTypes.DECIMAL(10, 2),
+    valorAberturaKgf: DataTypes.DECIMAL(10, 2),
+    valorAberturaRealKgf: DataTypes.DECIMAL(10, 2),
+    valorFechamentoKgf: DataTypes.DECIMAL(10, 2),
+    valorInicioAberturaMpa: DataTypes.DECIMAL(10, 2),
+    valorAberturaMpa: DataTypes.DECIMAL(10, 2),
+    valorAberturaRealMpa: DataTypes.DECIMAL(10, 2),
+    valorFechamentoMpa: DataTypes.DECIMAL(10, 2),
+    erro: DataTypes.DECIMAL(10, 2),
+    u: DataTypes.DECIMAL(10, 2),
+    k: DataTypes.DECIMAL(10, 2),
+    numeroLacre: DataTypes.STRING,
+    observacoes: DataTypes.TEXT,
+    servicosExecutados: DataTypes.TEXT
+  }, {
+    sequelize,
+    modelName: 'CertificadoNR13',
+    tableName: 'certificadonr13',
+  });
+  return CertificadoNR13;
+};
