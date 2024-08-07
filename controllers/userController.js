@@ -1,4 +1,4 @@
-const SequelizeUser = require('../models/sequelizeUser');
+const SequelizeUser = require('../config/database/sequelize');
 const User = require('../models/userModel');
 
 exports.createUser = async (req, res) => {

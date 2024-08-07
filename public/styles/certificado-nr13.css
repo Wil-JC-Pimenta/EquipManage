@@ -1,0 +1,96 @@
+<style>
+        body {
+            max-width: 1045px;
+            padding-left: 15px;
+            border: solid red 2px;
+        }
+        header{
+            align-items: center;
+            width: 99%;
+            height: 120px;
+            background-color: blue;
+        }
+       
+        table {
+            border-collapse: collapse;
+            border: 2px solid rgb(140 140 140);
+            font-family: sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        caption {
+            caption-side: bottom;
+            padding: 10px;
+            font-weight: bold;
+        }
+
+        thead,
+        tfoot {
+            background-color: rgb(228 240 245);
+        }
+
+        th,
+        td {
+            border: 1px solid rgb(160 160 160);
+            padding: 8px 10px;
+        }
+
+        td:last-of-type {
+            text-align: center;
+        }
+
+        .gallery {
+            padding-left: 10px;
+            height:max-content;
+            width: 950px;
+            border: solid black 2px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .gallery img {
+            width: 400px;
+            height: 650px;
+            height: auto;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+        }
+
+        .upload-form {
+            margin-bottom: 20px;
+        }
+
+        /* Styles Checklist */
+        .checklist {
+            max-width: 900px;
+            display: flex;
+            flex-wrap: wrap;
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .column {
+            flex: 1;
+            min-width: 250px;
+            margin-right: 20px;
+        }
+        .checklist-item {
+            margin-bottom: 10px;
+        }
+        input[type="text"] {
+            width: 200px;
+            margin-left: 5px;
+        }
+
+        .editable {
+            display: none;
+            margin: 10px 0;
+        }
+       #importante{
+        display: block;
+        border:1 px, solid, bluee;
+        border-radius: 25%;
+       }
+    </style>

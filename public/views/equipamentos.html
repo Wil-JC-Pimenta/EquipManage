@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="./styles/styles.css">
+  <title>Equipamentos</title>
+</head>
+<body>
+  <header>
+    <h1>EquipManage</h1>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/users">Usuários</a></li>
+        <li><a href="/clientes">Clientes</a></li>
+        <li><a href="/equipamentos">Equipamentos</a></li>
+        <li><a href="/funcionarios">Funcionários</a></li>
+        <li><a href="/certificados">Certificados</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <h2>Lista de Equipamentos</h2>
+    <table id="equipmentTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Descrição</th>
+          <th>Cliente</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="equipmentList"></tbody>
+    </table>
+    <h2>Adicionar Equipamento</h2>
+    <form id="equipmentForm">
+      <label for="nome">Nome:</label><br>
+      <input type="text" id="nome" name="nome" required><br>
+      <label for="descricao">Descrição:</label><br>
+      <textarea id="descricao" name="descricao" required></textarea><br>
+      <label for="clienteId">Cliente ID:</label><br>
+      <input type="number" id="clienteId" name="clienteId" required><br><br>
+      <input type="submit" value="Adicionar">
+    </form>
+    <div class="popup-overlay" id="editPopupOverlay"></div>
+    <div class="popup" id="editPopup">
+      <h3>Editar Equipamento</h3>
+      <form id="updateEquipmentForm">
+        <input type="hidden" id="updateId" name="id">
+        <label for="updateNome">Nome:</label><br>
+        <input type="text" id="updateNome" name="nome" required><br>
+        <label for="updateDescricao">Descrição:</label><br>
+        <textarea id="updateDescricao" name="descricao" required></textarea><br>
+        <label for="updateClienteId">Cliente ID:</label><br>
+        <input type="number" id="updateClienteId" name="clienteId" required><br><br>
+        <div class="actions">
+          <button type="submit" class="confirm">Atualizar</button>
+          <button type="button" class="cancel" onclick="closeEditPopup()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+    <div class="popup-overlay" id="deletePopupOverlay"></div>
+    <div class="popup" id="deletePopup">
+      <h3>Confirmar Deleção</h3>
+      <p id="deleteMessage"></p>
+      <div class="actions">
+        <button class="confirm" onclick="confirmDelete()">Sim</button>
+        <button class="cancel" onclick="closeDeletePopup()">Não</button>
+      </div>
+    </div>
+  </main>
+  <footer>
+    <div class="container-footer">
+      <div class="row-footer">
+          <!-- footer col-->
+          <div class="footer-col">
+              <h4>Empresa</h4>
+              <ul>
+                  <li><a href="#"> Quem somos </a></li>
+                  <li><a href=""> nossos serviços </a></li>
+                  <li><a href=""> política de privacidade </a></li>
+              </ul>
+          </div>
+          <!--end footer col-->
+          <!-- footer col-->
+          <div class="footer-col">
+              <h4>Obter ajuda</h4>
+              <ul>
+                <li><a href="#">FAQ</a></li>
+                <li><a href="#">Documentação</a></li>
+                <li><a href="#">Suporte Técnico</a></li>
+                <li><a href="#">Status do Sistema</a></li>
+                <li><a href="#">Blog de Atualizações</a></li>
+                <li><a href="#">Termos de Serviço</a></li>
+                <li><a href="#">Política de Privacidade</a></li>
+         
+            </ul>
+            
+          </div>
+          <!--end footer col-->
+          <!-- footer col-->
+          <div class="footer-col">
+              <h4>Loja online</h4>
+              <ul>
+                <li><a href="#">API</a></li>
+                <li><a href="#">Integrações</a></li>
+                <li><a href="#">Roadmap</a></li>
+                <li><a href="#">Comunidade</a></li>
+              </ul>
+          </div>
+          <!--end footer col-->
+          <!-- footer col-->
+          <div class="footer-col">
+              <h4>Se subescreva!</h4>
+              <div class="form-sub">
+                  <form>
+                      <input type="email" placeholder="Digite o seu e-mail" required>
+                      <button>subscrever</button>
+                  </form>
+              </div>
+
+              <div class="medias-socias">
+                  <a href="#"> <i class="fa fa-facebook"></i> </a>
+                  <a href="#"> <i class="fa fa-instagram"></i> </a>
+                  <a href="#"> <i class="fa fa-twitter"></i> </a>
+                  <a href="#"> <i class="fa fa-linkedin"></i> </a>
+              </div>
+
+          </div>
+          <!--end footer col-->
+      </div>
+  </div>
+  </footer>
+  <script>
+    let equipmentToDelete = null;
+
+    async function fetchEquipments() {
+      try {
+        const response = await fetch('/api/equipamentos');
+        const equipments = await response.json();
+
+        const equipmentList = document.getElementById('equipmentList');
+        equipmentList.innerHTML = '';
+        equipments.forEach(equipment => {
+          const row = document.createElement('tr');
+
+          const formattedDescription = formatDescription(equipment.descricao);
+
+          row.innerHTML = `
+            <td>${equipment.id}</td>
+            <td>${equipment.nome}</td>
+            <td class="description">${formattedDescription}</td>
+            <td>${equipment.clienteId} - ${equipment.cliente ? equipment.cliente.name : 'N/A'}</td>
+            <td class="actions">
+              <button class="edit" onclick="showEditPopup(${equipment.id}, '${equipment.nome}', '${formattedDescription.replace(/\n/g, '\\n')}', ${equipment.clienteId})">Editar</button>
+              <button class="delete" onclick="showDeletePopup(${equipment.id}, '${equipment.nome}')">Deletar</button>
+            </td>
+          `;
+          equipmentList.appendChild(row);
+        });
+      } catch (error) {
+        console.error('Erro ao buscar equipamentos:', error);
+      }
+    }
+
+    document.getElementById('equipmentForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      const nome = document.getElementById('nome').value;
+      const descricao = document.getElementById('descricao').value;
+      const clienteId = document.getElementById('clienteId').value;
+
+      const newEquipment = { nome, descricao, clienteId };
+
+      try {
+        const response = await fetch('/api/equipamentos', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(newEquipment)
+        });
+
+        if (response.ok) {
+          fetchEquipments();
+          document.getElementById('equipmentForm').reset(); // Limpar o formulário após adicionar
+        } else {
+          console.error('Erro ao adicionar equipamento:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Erro ao adicionar equipamento:', error);
+      }
+    });
+
+    function showEditPopup(id, nome, descricao, clienteId) {
+      document.getElementById('updateId').value = id;
+      document.getElementById('updateNome').value = nome;
+      document.getElementById('updateDescricao').value = descricao.replace(/\\n/g, '\n');
+      document.getElementById('updateClienteId').value = clienteId;
+      document.getElementById('editPopupOverlay').style.display = 'block';
+      document.getElementById('editPopup').style.display = 'block';
+    }
+
+    function closeEditPopup() {
+      document.getElementById('editPopupOverlay').style.display = 'none';
+      document.getElementById('editPopup').style.display = 'none';
+    }
+
+    document.getElementById('updateEquipmentForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      const id = document.getElementById('updateId').value;
+      const nome = document.getElementById('updateNome').value;
+      const descricao = document.getElementById('updateDescricao').value;
+      const clienteId = document.getElementById('updateClienteId').value;
+
+      const updatedEquipment = { nome, descricao, clienteId };
+
+      try {
+        const response = await fetch(`/api/equipamentos/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updatedEquipment)
+        });
+
+        if (response.ok) {
+          fetchEquipments();
+          closeEditPopup();
+        } else {
+          console.error('Erro ao atualizar equipamento:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Erro ao atualizar equipamento:', error);
+      }
+    });
+
+    function showDeletePopup(id, nome) {
+      equipmentToDelete = id;
+      document.getElementById('deleteMessage').innerText = `Deseja realmente deletar o Equipamento: ${nome}?`;
+      document.getElementById('deletePopupOverlay').style.display = 'block';
+      document.getElementById('deletePopup').style.display = 'block';
+    }
+
+    function closeDeletePopup() {
+      document.getElementById('deletePopupOverlay').style.display = 'none';
+      document.getElementById('deletePopup').style.display = 'none';
+      equipmentToDelete = null;
+    }
+
+    async function confirmDelete() {
+      if (equipmentToDelete !== null) {
+        try {
+          const response = await fetch(`/api/equipamentos/${equipmentToDelete}`, {
+            method: 'DELETE'
+          });
+
+          if (response.ok) {
+            fetchEquipments();
+            closeDeletePopup();
+          } else {
+            console.error('Erro ao deletar equipamento:', response.statusText);
+          }
+        } catch (error) {
+          console.error('Erro ao deletar equipamento:', error);
+        }
+      }
+    }
+
+    function formatDescription(description) {
+      return description ? description.replace(/, /g, '\n') : '';
+    }
+
+    fetchEquipments();
+  </script>
+</body>
+</html>

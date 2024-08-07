@@ -1,16 +1,29 @@
 const express = require('express');
 const path = require('path');
+const mongoose = require('mongoose');
 const app = express();
 const port = process.env.PORT || 3001;
 
-const sequelize = require('./models/index');
+const sequelize = require('./config/database/sequelize');
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const clienteRoutes = require('./routes/clienteRoutes');
 const equipamentoRoutes = require('./routes/equipamentoRoutes');
 const funcionarioRoutes = require('./routes/funcionarioRoutes');
-const certificadoRoutes = require('./routes/certificadoRoutes');
-const { User, Cliente, Equipamento, Funcionario, Certificado } = require('./models');
+const certificadoRoutes = require('./routes/certificadoRoutes'); // Remover esta linha duplicada
+
+// Conectar ao MongoDB
+mongoose.connect('mongodb://localhost:27017/certificadonr13', { useNewUrlParser: true, useUnifiedTopology: true });
+
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'Erro na conexão ao MongoDB:'));
+db.once('open', () => {
+  console.log('Conectado ao MongoDB');
+});
+
+// Use a rota correta
+const certificadonr13Routes = require('./routes/certificadonr13Routes');
+app.use('/api/certificadonr13', certificadonr13Routes);
 
 // Middleware para parsear JSON
 app.use(express.json());
@@ -22,32 +35,35 @@ app.use((req, res, next) => {
 });
 
 // Servir arquivos estáticos da pasta views
-app.use(express.static(path.join(__dirname, 'views')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Rota raiz para servir a página inicial
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views/index.html'));
+    res.sendFile(path.join(__dirname, 'public/views/index.html'));
 });
 
 // Rotas para as views
 app.get('/users', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views/users.html'));
+    res.sendFile(path.join(__dirname, 'public/views/users.html'));
 });
 
 app.get('/clientes', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views/clientes.html'));
+    res.sendFile(path.join(__dirname, 'public/views/clientes.html'));
 });
 
 app.get('/equipamentos', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views/equipamentos.html'));
+    res.sendFile(path.join(__dirname, 'public/views/equipamentos.html'));
 });
 
 app.get('/funcionarios', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views/funcionarios.html'));
+    res.sendFile(path.join(__dirname, 'public/views/funcionarios.html'));
 });
 
 app.get('/certificados', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views/certificados.html'));
+    res.sendFile(path.join(__dirname, 'public/views/certificados.html'));
+});
+app.get('/certificadonr13', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/views/certificadonr13.html'));
 });
 
 // Usar as rotas da API

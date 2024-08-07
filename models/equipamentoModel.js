@@ -1,6 +1,6 @@
 // models/equipamentoModel.js
 const { DataTypes } = require('sequelize');
-const sequelize = require('../models/index'); // Ajuste o caminho conforme necessário
+const sequelize = require('../config/database/sequelize');
 
 const Equipamento = sequelize.define('equipamentos', {
   id: {
