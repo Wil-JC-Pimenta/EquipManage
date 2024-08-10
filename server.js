@@ -16,10 +16,6 @@ const certificadoRoutes = require('./routes/certificadoRoutes');
 const certificadonr13Routes = require('./routes/certificadonr13Routes'); 
 
 
-app.use(bodyParser.json());
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'public/views/certificadoview.ejs'));
-
 
 // Middleware para parsear JSON
 app.use(express.json());
@@ -61,6 +57,9 @@ app.get('/certificados', (req, res) => {
 app.get('/certificadonr13', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/views/certificadonr13.html'));
 });
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'public/views/certificadoview.ejs'));
 
 // Usar as rotas da API
 app.use('/api/users', userRoutes);

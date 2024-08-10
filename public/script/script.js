@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function enviarDados(dados) {
-    fetch('https://seuservidor.com/api/salvar', {
+    fetch('https://localhost:3001/api/salvar', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
