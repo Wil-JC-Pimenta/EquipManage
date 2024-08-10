@@ -1,6 +1,8 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+const puppeteer = require('puppeteer');
 const path = require('path');
-const mongoose = require('mongoose');
+
 const app = express();
 const port = process.env.PORT || 3001;
 
@@ -10,20 +12,14 @@ const adminRoutes = require('./routes/adminRoutes');
 const clienteRoutes = require('./routes/clienteRoutes');
 const equipamentoRoutes = require('./routes/equipamentoRoutes');
 const funcionarioRoutes = require('./routes/funcionarioRoutes');
-const certificadoRoutes = require('./routes/certificadoRoutes'); // Remover esta linha duplicada
+const certificadoRoutes = require('./routes/certificadoRoutes'); 
+const certificadonr13Routes = require('./routes/certificadonr13Routes'); 
 
-// Conectar ao MongoDB
-mongoose.connect('mongodb://localhost:27017/certificadonr13', { useNewUrlParser: true, useUnifiedTopology: true });
 
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'Erro na conexão ao MongoDB:'));
-db.once('open', () => {
-  console.log('Conectado ao MongoDB');
-});
+app.use(bodyParser.json());
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'public/views/certificadoview.ejs'));
 
-// Use a rota correta
-const certificadonr13Routes = require('./routes/certificadonr13Routes');
-app.use('/api/certificadonr13', certificadonr13Routes);
 
 // Middleware para parsear JSON
 app.use(express.json());
@@ -73,6 +69,9 @@ app.use('/api/clientes', clienteRoutes);
 app.use('/api/equipamentos', equipamentoRoutes);
 app.use('/api/funcionarios', funcionarioRoutes);
 app.use('/api/certificados', certificadoRoutes);
+app.use('/api/certificadonr13', certificadonr13Routes);
+
+
 
 // Rota para exibir a lista de certificados com nomes correspondentes
 app.get('/certificados', async (req, res) => {
@@ -89,44 +88,16 @@ app.get('/certificados', async (req, res) => {
         res.status(500).json({ error: 'Erro ao buscar certificados' });
     }
 });
-
-// Rotas de contagem
-app.get('/api/users/count', async (req, res) => {
+// Endpoint para consultar os dados
+app.get('/certificadonr13', async (req, res) => {
     try {
-        const count = await User.count();
-        res.json({ count });
-    } catch (error) {
-        res.status(500).json({ error: 'Erro ao buscar contagem de usuários' });
+      const result = await pool.query('SELECT * FROM certificadonr13');
+      res.status(200).json(result.rows);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Erro ao consultar os dados');
     }
-});
-
-app.get('/api/clientes/count', async (req, res) => {
-    try {
-        const count = await Cliente.count();
-        res.json({ count });
-    } catch (error) {
-        res.status(500).json({ error: 'Erro ao buscar contagem de clientes' });
-    }
-});
-
-app.get('/api/equipamentos/count', async (req, res) => {
-    try {
-        const count = await Equipamento.count();
-        res.json({ count });
-    } catch (error) {
-        res.status(500).json({ error: 'Erro ao buscar contagem de equipamentos' });
-    }
-});
-
-app.get('/api/certificados/count', async (req, res) => {
-    try {
-        const count = await Certificado.count();
-        res.json({ count });
-    } catch (error) {
-        res.status(500).json({ error: 'Erro ao buscar contagem de certificados' });
-    }
-});
-
+  });
 // Sincronizar banco de dados e iniciar servidor
 sequelize.sync({ alter: true }).then(() => {
     app.listen(port, () => {

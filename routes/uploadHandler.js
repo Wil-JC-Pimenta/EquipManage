@@ -13,18 +13,3 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + path.extname(file.originalname));
   }
 });
-
-const upload = multer({ storage });
-
-// Rota para lidar com o upload de imagens
-router.post('/upload', upload.array('images', 4), (req, res) => {
-  const files = req.files;
-  const data = req.body;
-
-  console.log('Dados recebidos:', data);
-  console.log('Arquivos recebidos:', files);
-
-  res.send('Dados e imagens enviados com sucesso!');
-});
-
-module.exports = router;

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Certificado NR13</title>
+    <style>
+        /* Estilos para a impressão do PDF */
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+        }
+        .header, .footer {
+            width: 100%;
+            text-align: center;
+            position: fixed;
+        }
+        .header {
+            top: 0px;
+        }
+        .footer {
+            bottom: 0px;
+        }
+        .content {
+            margin-top: 100px;
+            margin-bottom: 50px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Certificado NR13</h1>
+    </div>
+
+    <div class="content">
+        <table>
+            <tr>
+                <th>Registro de Entrada:</th>
+                <td><%= certificado.registroEntrada %></td>
+            </tr>
+            <tr>
+                <th>Número de Patrimônio:</th>
+                <td><%= certificado.numeroPatrimonio %></td>
+            </tr>
+            <tr>
+                <th>Cliente:</th>
+                <td><%= certificado.cliente %></td>
+            </tr>
+            <!-- Adicione mais linhas conforme necessário para os outros campos -->
+        </table>
+    </div>
+
+    <div class="footer">
+        <p>Certificado gerado em: <%= new Date(certificado.dataEnsaio).toLocaleDateString() %></p>
+    </div>
+</body>
+</html>
