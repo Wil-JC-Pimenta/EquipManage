@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <script src="../script/script.js"></script>
+        <script src="../script/generate-pdf.js"></script>
+        <link rel="stylesheet" href="./styles/styles.css">
+        <link rel="stylesheet" href="./styles/components-index.css">
+        <link rel="stylesheet" href="../styles/certificado-nr13.css">
+        
+        <title>Certificado-NR13</title>
+    
+    </head>
+<body>
+    <header>
+        <h1>EquipManage</h1>
+        <nav>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/users">Usuários</a></li>
+            <li><a href="/clientes">Clientes</a></li>
+            <li><a href="/equipamentos">Equipamentos</a></li>
+            <li><a href="/funcionarios">Equipe Técnica</a></li>
+            <li><a href="/certificados">Certificados</a></li>
+            <li><a href="/certificadonr13">Certificado NR-13</a></li>
+          </ul>
+        </nav>
+      </header>
+    <section>  
+    <h2>Certificado de Ensaio</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Registro de Entrada</th>
+                <th scope="col">Numero do Patrimônio</th>
+                <th scope="col">Numero do contrato</th>
+                <th scope="col">Cliente</th>
+            </tr>
+        </thead>
+        <tr>
+            <th><input type="text"></th>
+            <th><input type="text"></th>
+            <th><input type="text"></th>
+            <th><input type="text"></th>
+        </tr>
+    </table>
+
+    <h2>Dados do equipamento a ser ensaiado</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Instrumento</th>
+                <th scope="col">TAG</th>
+                <th scope="col">TAG do vaso</th>
+            </tr>
+        </thead>
+        <tr>
+            <th><input type="text"></th>
+            <th><input type="text"></th>
+            <th><input type="text"></th>
+        </tr>
+    </table>
+    <br>
+    <table>
+        <tr>
+            <thead>
+                <th scope="col">Fabricante</th>
+                <th scope="col">Modelo</th>
+                <th scope="col">Numero de série</th>
+                <th scope="col">Pressão de ajuste</th>
+        </tr>
+        </thead>
+        <tr>
+            <th><input type="text"></th>
+            <th><input type="text"></th>
+            <th><input type="text"></th>
+            <th><input type="text"></th>
+        </tr>
+        <tr>
+            <thead>
+                <th scope="col">Diâmetro</th>
+                <th scope="col">Diâmetro de orifício</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Cor</th>
+        </tr>
+        </thead>
+        <tr>
+            <th><input type="text"></th>
+            <th><input type="text"></th>
+            <th><input type="text"></th>
+            <th><input type="text"></th>
+        </tr>
+        <tr>
+            <thead>
+                <th scope="col">Fluído</th>
+                <th scope="col">Vazão</th>
+                <th scope="col">Contra-pressão</th>
+                <th scope="col">Temperatura de operação</th>
+        </tr>
+        </thead>
+        <tr>
+            <th><input type="text"></th>
+            <th><input type="text"></th>
+            <th><input type="text"></th>
+            <th><input type="text"></th>
+        </tr>
+    </table>
+
+    <h2>Dados dos padrões utilizados</h2>
+    <table>
+        <tr>
+            <thead>
+                <th scope="col">Certificado</th>
+                <th scope="col">Equipamento</th>
+                <th scope="col">Patrimônio</th>
+                <th scope="col">Validade</th>
+        </tr>
+        </thead>
+        <tr>
+            <th><input type="text"></th>
+            <th><input type="text"></th>
+            <th><input type="text"></th>
+            <th><input type="text"></th>
+        </tr>
+        <tr>
+            <th><input type="text"></th>
+            <th><input type="text"></th>
+            <th><input type="text"></th>
+            <th><input type="text"></th>
+        </tr>
+    </table>
+
+    <h2>Dados do Ensaio</h2>
+
+    <table>
+        <tr>
+            <thead>
+                <th scope="col">Procedimentos Utilizados</th>
+                <th scope="col">Temperatura ambiente</th>
+                <th scope="col">Humidade relativa do ar</th>
+        </tr>
+        </thead>
+        <tr>
+            <th><input type="text"></th>
+            <th><input type="text"></th>
+            <th><input type="text"></th>
+        </tr>
+    </table>
+    <br>
+    <table>
+        <tr>
+            <thead>
+                <th scope="col">Local</th>
+                <th scope="col">Data do ensaio</th>
+                <th scope="col">Próximo Ensaio</th>
+        </tr>
+        </thead>
+        <tr>
+            <th><input type="text"></th>
+            <th><input type="date"></th>
+            <th><input type="date"></th>
+        </tr>
+    </table>
+    <br>
+    <h2>Resultados do Ensaio</h2>
+    <br><br><br>
+
+    <h3>Antes do Ajuste:</h3>
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Valor de início de abertura (kgf/cm²)</th>
+                <th scope="col">Valor de abertura (kgf/cm²)</th>
+                <th scope="col">Valor de abertura real (kgf/cm²)</th>
+                <th scope="col">Valor de fechamento (kgf/cm²)</th>
+            </tr>
+        </thead>
+        <tr>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+        </tr>
+    </table>
+    <br>
+    <table>
+    
+    <br>
+    <h3>Após ajuste:</h3>
+    <br>
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Valor de início de abertura (kgf/cm²)</th>
+                <th scope="col">Valor de abertura (kgf/cm²)</th>
+                <th scope="col">Valor de abertura real (kgf/cm²)</th>
+                <th scope="col">Valor de fechamento (kgf/cm²)</th>
+            </tr>
+        </thead>
+        <tr>
+            <td><input type="text" data-kgf="inicio-abertura"></td>
+            <td><input type="text" data-kgf="abertura"></td>
+            <td><input type="text" data-kgf="abertura-real"></td>
+            <td><input type="text" data-kgf="fechamento"></td>
+        </tr>
+    </table>
+    <br>
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Valor de início de abertura (Mpa)</th>
+                <th scope="col">Valor de abertura (Mpa)</th>
+                <th scope="col">Valor de abertura real (Mpa)</th>
+                <th scope="col">Valor de fechamento (Mpa)</th>
+            </tr>
+        </thead>
+        <tr>
+            <td><input type="text" data-mpa="inicio-abertura"></td>
+            <td><input type="text" data-mpa="abertura"></td>
+            <td><input type="text" data-mpa="abertura-real"></td>
+            <td><input type="text" data-mpa="fechamento"></td>
+        </tr>
+    </table>
+    <br>
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Erro (kgf/cm²)</th>
+                <th scope="col">U (kgf/cm²)</th>
+                <th scope="col">K (kgf/cm²)</th>
+            </tr>
+        </thead>
+        <tr>
+            <td><input type="text" id="erro"></td>
+            <td><input type="text" id="u"></td>
+            <td><input type="text" id="k"></td>
+        </tr>
+    </table>
+    
+   
+    <br>
+    <div>
+        <ul>
+            <li>Valor de Abertura: Valor setado para abertura da válvula sob ensaio.</li>
+            <li>Valor de Abertura Real: Média das medições feitas pelo(s) padrão(ões) envolvido(s) no momento da abertura.</li>
+            <li>Valor de Inicio de Abertura: Valor de início de vazamento durante o carregamento de pressão nas condições de ensaio.</li>
+            <li>Valor de Fechamento: Valor de vedação encontrado após a abertura da válvula nas condições de ensaio.</li>
+            <li>Erro: Diferença entre o Valor de Abertura e o Valor do Padrão.</li>
+            <li>U: Incerteza padronizada de medição multiplicada pelo fator k, considerando um nível de confiança de 95,45%.</li>
+        </ul>
+    </div>
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">Número do Lacre</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="text"></td>
+                </tr>
+            </tbody>
+        </table>
+        <div>
+            <p>Observações:</p>
+            <p><textarea rows="4" cols="50"></textarea></p>
+        </div>
+    </div>
+
+    <h2>Serviços Executados</h2>
+
+    <div class="checklist">
+        <div class="column">
+            <div class="checklist-item">
+                <input type="checkbox" id="valvula">
+                <label for="valvula">Preenchimento dos Dados da Válvula.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="teste-recepcao">
+                <label for="teste-recepcao">Teste de Recepção.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="desmontagem">
+                <label for="desmontagem">Desmontagem.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="registro-fotografico">
+                <label for="registro-fotografico">Registro Fotográfico.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="limpeza-interna">
+                <label for="limpeza-interna">Limpeza Interna.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="inspecao-internos">
+                <label for="inspecao-internos">Inspeção dos Internos.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="jateamento">
+                <label for="jateamento">Jateamento.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="lapidacao">
+                <label for="lapidacao">Lapidação.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="servico-usinagem">
+                <label for="servico-usinagem">Serviço de Usinagem.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="substituicao-juntas-internas">
+                <label for="substituicao-juntas-internas">Substituição de Juntas Internas.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="substituicao-juntas-externas">
+                <label for="substituicao-juntas-externas">Substituição de Juntas Externas.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="troca-peca">
+                <label for="troca-peca">Troca de Peça.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="substituicao-cupilhas">
+                <label for="substituicao-cupilhas">Substituição de Cupilhas.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="substituicao-prisioneiros">
+                <label for="substituicao-prisioneiros">Substituição de Prisioneiros, Porcas e Arruelas.</label>
+            </div>
+        </div>
+        <div class="column">
+            <div class="checklist-item">
+                <input type="checkbox" id="montagem">
+                <label for="montagem">Montagem.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="ajuste">
+                <label for="ajuste">Ajuste.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="ensaio">
+                <label for="ensaio">Ensaio.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="teste-fole">
+                <label for="teste-fole">Teste Fole.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="travamento-contraporca">
+                <label for="travamento-contraporca">Travamento de Contraporca de Parafuso de Ajuste.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="ajuste-diferencial-alivio">
+                <label for="ajuste-diferencial-alivio">Ajuste de Diferencial do Alívio.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="preenchimento-relatorio">
+                <label for="preenchimento-relatorio">Preenchimento do Relatório.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="limpeza-externa">
+                <label for="limpeza-externa">Limpeza Externa.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="pintura">
+                <label for="pintura">Pintura.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="limpeza-oxigenio">
+                <label for="limpeza-oxigenio">Limpeza para uso de oxigênio.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="verificacao-luz-negra">
+                <label for="verificacao-luz-negra">Verificação com Luz Negra.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="plaqueta-lacre">
+                <label for="plaqueta-lacre">Plaqueta e Lacre.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="teste-vedacao">
+                <label for="teste-vedacao">Teste de Vedação.</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="teste-bolhas">
+                <label for="teste-bolhas"><span> de Bolhas - Resultado: 
+                    <input type="text" id="teste-bolhas-resultado" placeholder="bpm">
+                </label>
+            
+        </div>
+    </div id="importante">
+
+    <p>A reprodução deste certificado só terá validade se for integral.</p>
+    <p>Os resultados deste certificado referem-se exclusivamente ao instrumento ensaiado, não sendo extensivo a quaisquer lotes.</p>
+    </div>
+    <h2>Fotos da Manutenção</h2>
+    <br>
+    <div>
+    <form class="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+        <label for="imagem1">Recepção</label>
+        <input type="file" id="imagem1" name="imagem1" accept="image/*"><br><br>
+        <label for="imagem2">Desmontagem</label>
+        <input type="file" id="imagem2" name="imagem2" accept="image/*"><br><br>
+        <label for="imagem3">Montagem</label>
+        <input type="file" id="imagem3" name="imagem3" accept="image/*"><br><br>
+        <label for="imagem4">Calibração</label>
+        <input type="file" id="imagem4" name="imagem4" accept="image/*"><br><br>
+        <button type="submit">Enviar</button>
+    </form>
+    <div class="gallery"></div>
+    <br>
+    <div>
+        <h3>NR 13 - CALDEIRAS, VASOS DE PRESSÃO, TUBULAÇÕES E TANQUES METÁLICOS DE 
+            ARMAZENAMENTO</h3>
+            <button id="generate-pdf">Salvar</button>
+        <p>Consulte a norma: <a href="https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-partitaria-permanente/arquivos/normas-regulamentadoras/nr-13-atualizada-2022-retificada.pdf">NR 13</a></p>
+    </div>
+  
+    <footer>
+        <div class="container-footer">
+          <div class="row-footer">
+              <!-- footer col-->
+              <div class="footer-col">
+                  <h4>Empresa</h4>
+                  <ul>
+                      <li><a href="#"> Quem somos </a></li>
+                      <li><a href=""> nossos serviços </a></li>
+                      <li><a href=""> política de privacidade </a></li>
+                  </ul>
+              </div>
+              <!--end footer col-->
+              <!-- footer col-->
+              <div class="footer-col">
+                  <h4>Obter ajuda</h4>
+                  <ul>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Documentação</a></li>
+                    <li><a href="#">Suporte Técnico</a></li>
+                    <li><a href="#">Status do Sistema</a></li>
+                    <li><a href="#">Blog de Atualizações</a></li>
+                    <li><a href="#">Termos de Serviço</a></li>
+                    <li><a href="#">Política de Privacidade</a></li>
+             
+                </ul>
+                
+              </div>
+              <!--end footer col-->
+              <!-- footer col-->
+              <div class="footer-col">
+                  <h4>Loja online</h4>
+                  <ul>
+                    <li><a href="#">API</a></li>
+                    <li><a href="#">Integrações</a></li>
+                    <li><a href="#">Roadmap</a></li>
+                    <li><a href="#">Comunidade</a></li>
+                  </ul>
+              </div>
+              <!--end footer col-->
+              <!-- footer col-->
+              <div class="footer-col">
+                  <h4>Se subescreva!</h4>
+                  <div class="form-sub">
+                      <form>
+                          <input type="email" placeholder="Digite o seu e-mail" required>
+                          <button>subscrever</button>
+                      </form>
+                  </div>
+                  <div class="medias-socias">
+                      <a href="#"> <i class="fa fa-facebook"></i> </a>
+                      <a href="#"> <i class="fa fa-instagram"></i> </a>
+                      <a href="#"> <i class="fa fa-twitter"></i> </a>
+                      <a href="#"> <i class="fa fa-linkedin"></i> </a>
+                  </div>
+              </div>
+              <!--end footer col-->
+          </div>
+        </div>
+        <div class="=copy">
+          <h6>&copy; 2024 W J C P Tecnologia. Todos os direitos reservados.</h6>
+        </div>
+    </footer>
+ 
+  
+   
+
+    <script src="./script/script.js"></script>
+    <script src="./script/generate-pdf.js"></script>
+   
+</section>
+
+</body>
+</html>
