@@ -7,7 +7,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-        <script src="/public/script/script.js"></script>
+        <script src="./script/script.js"></script>
         <link rel="stylesheet" href="./styles/certificado-nr13.css">
         
         <title>Certificado-NR13</title>
@@ -181,22 +181,6 @@
     <table>
         <thead>
             <tr>
-                <th scope="col">Erro (kgf/cm²)</th>
-                <th scope="col">U (kgf/cm²)</th>
-                <th scope="col">K (kgf/cm²)</th>
-            </tr>
-        </thead>
-        <tr>
-            <td><input type="text" id="erro"></td>
-            <td><input type="text" id="u"></td>
-            <td><input type="text" id="k"></td>
-        </tr>
-    </table>
-    <br>
-    <h3>Após ajuste:</h3>
-    <table>
-        <thead>
-            <tr>
                 <th scope="col">Valor de início de abertura (Mpa)</th>
                 <th scope="col">Valor de abertura (Mpa)</th>
                 <th scope="col">Valor de abertura real (Mpa)</th>
@@ -210,6 +194,24 @@
             <td><input type="text" data-mpa="fechamento"></td>
         </tr>
     </table>
+    <br>
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Erro (kgf/cm²)</th>
+                <th scope="col">U (kgf/cm²)</th>
+                <th scope="col">K (kgf/cm²)</th>
+            </tr>
+        </thead>
+        <tr>
+            <td><input type="text" id="erro"></td>
+            <td><input type="text" id="u"></td>
+            <td><input type="text" id="k"></td>
+        </tr>
+    </table>
+    <br>
+    <h3>Após ajuste:</h3>
+   
     <br>
     <div>
         <ul>
@@ -401,35 +403,8 @@
  
     <div class="gallery"></div>
     <button id="generate-pdf">Gerar PDF</button>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const form = document.querySelector('.upload-form');
-            const gallery = document.querySelector('.gallery');
-
-            form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                const formData = new FormData(form);
-                fetch('/upload', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(files => {
-                    gallery.innerHTML = '';
-                    files.forEach(file => {
-                        const img = document.createElement('img');
-                        img.src = '/' + file;
-                        gallery.appendChild(img);
-                    });
-                })
-                .catch(error => console.error('Error:', error));
-            });
-
-            document.getElementById('generate-pdf').addEventListener('click', function () {
-                window.location.href = '/generate-pdf';
-            });
-        });
-    </script>
+    <script src="./script/script.js"></script>
+ 
 
 </body>
 </html>
