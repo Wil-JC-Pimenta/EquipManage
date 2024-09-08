@@ -156,6 +156,7 @@
             <td class="description">${formattedDescription}</td>
             <td>${equipment.clienteId} - ${equipment.cliente ? equipment.cliente.name : 'N/A'}</td>
             <td class="actions">
+                 
               <button class="edit" onclick="showEditPopup(${equipment.id}, '${equipment.nome}', '${formattedDescription.replace(/\n/g, '\\n')}', ${equipment.clienteId})">Editar</button>
               <button class="delete" onclick="showDeletePopup(${equipment.id}, '${equipment.nome}')">Deletar</button>
             </td>
