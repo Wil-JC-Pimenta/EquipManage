@@ -4,121 +4,58 @@ const app = express();
 const port = process.env.PORT || 3001;
 
 const sequelize = require('./config/database/sequelize');
+const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const clienteRoutes = require('./routes/clienteRoutes');
 const equipamentoRoutes = require('./routes/equipamentoRoutes');
 const funcionarioRoutes = require('./routes/funcionarioRoutes');
 const certificadoRoutes = require('./routes/certificadoRoutes');
-const { User, Cliente, Equipamento, Funcionario, Certificado } = require('./config/database/sequelize');
+const errorHandler = require('./middlewares/errorHandler');  // Middleware de tratamento de erros
+const authMiddleware = require('./middlewares/authMiddleware');  // Middleware de autenticação
 
-// Middleware para parsear JSON
+
+// Middleware para JSON e logging
 app.use(express.json());
-
-// Middleware para logging
 app.use((req, res, next) => {
     console.log(`${req.method} ${req.url}`);
     next();
 });
 
-// Servir arquivos estáticos da pasta views
-app.use(express.static(path.join(__dirname, 'public')));
+// Rotas de autenticação
+app.use('/api/auth', authRoutes);
 
-// Rota raiz para servir a página inicial
+// Rotas protegidas por autenticação
+app.use('/api/users', authMiddleware, userRoutes);
+app.use('/api/admins', authMiddleware, adminRoutes);
+app.use('/api/clientes', authMiddleware, clienteRoutes);
+app.use('/api/equipamentos', authMiddleware, equipamentoRoutes);
+app.use('/api/funcionarios', authMiddleware, funcionarioRoutes);
+app.use('/api/certificados', authMiddleware, certificadoRoutes);
+
+// Servir arquivos estáticos e views
+app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/views/index.html'));
 });
 
-// Rotas para as views
-app.get('/users', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/views/users.html'));
+// Rota de exemplo com erro
+app.get('/erro', (req, res, next) => {
+    const erro = new Error('Algo deu errado!');
+    erro.status = 500;
+    next(erro);
 });
 
-app.get('/clientes', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/views/clientes.html'));
-});
-
-app.get('/equipamentos', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/views/equipamentos.html'));
-});
-
-app.get('/funcionarios', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/views/funcionarios.html'));
-});
-
-app.get('/certificados', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/views/certificados.html'));
-});
-app.get('/certificadonr13', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/views/certificadonr13.html'));
-});
-
-// Usar as rotas da API
-app.use('/api/users', userRoutes);
-app.use('/api/admins', adminRoutes);
-app.use('/api/clientes', clienteRoutes);
-app.use('/api/equipamentos', equipamentoRoutes);
-app.use('/api/funcionarios', funcionarioRoutes);
-app.use('/api/certificados', certificadoRoutes);
-
-// Rota para exibir a lista de certificados com nomes correspondentes
-app.get('/certificados', async (req, res) => {
-    try {
-        const certificados = await Certificado.findAll({
-            include: [
-                { model: Cliente, as: 'cliente' },
-                { model: Equipamento, as: 'equipamento' },
-                { model: Funcionario, as: 'funcionario' }
-            ]
-        });
-        res.json(certificados); // Alterado para res.json(certificados) para retornar JSON
-    } catch (error) {
-        res.status(500).json({ error: 'Erro ao buscar certificados' });
-    }
-});
-
-// Rotas de contagem
-app.get('/api/users/count', async (req, res) => {
-    try {
-        const count = await User.count();
-        res.json({ count });
-    } catch (error) {
-        res.status(500).json({ error: 'Erro ao buscar contagem de usuários' });
-    }
-});
-
-app.get('/api/clientes/count', async (req, res) => {
-    try {
-        const count = await Cliente.count();
-        res.json({ count });
-    } catch (error) {
-        res.status(500).json({ error: 'Erro ao buscar contagem de clientes' });
-    }
-});
-
-app.get('/api/equipamentos/count', async (req, res) => {
-    try {
-        const count = await Equipamento.count();
-        res.json({ count });
-    } catch (error) {
-        res.status(500).json({ error: 'Erro ao buscar contagem de equipamentos' });
-    }
-});
-
-app.get('/api/certificados/count', async (req, res) => {
-    try {
-        const count = await Certificado.count();
-        res.json({ count });
-    } catch (error) {
-        res.status(500).json({ error: 'Erro ao buscar contagem de certificados' });
-    }
-});
+// Middleware de tratamento de erros
+app.use(errorHandler);
 
 // Sincronizar banco de dados e iniciar servidor
-sequelize.sync({ alter: true }).then(() => {
-    app.listen(port, () => {
-        console.log(`Servidor rodando em http://localhost:${port}`);
+sequelize.sync({ alter: true })
+    .then(() => {
+        app.listen(port, () => {
+            console.log(`Servidor rodando em http://localhost:${port}`);
+        });
+    })
+    .catch(err => {
+        console.error('Erro ao sincronizar banco de dados:', err);
     });
-}).catch(err => {
-    console.error('Erro ao sincronizar banco de dados:', err);
-});
