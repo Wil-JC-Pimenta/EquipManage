@@ -1,8 +1,6 @@
-// models/userModel.js
-
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database/sequelize');
-const Role = require('./roleModel'); // Adicionar a importação do Role
+const Role = require('./roleModel');
 
 const User = sequelize.define('User', {
   id: {
